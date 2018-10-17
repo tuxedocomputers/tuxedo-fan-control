@@ -1,0 +1,19 @@
+.entrytitlespan {
+    width: 150px;
+    margin-right: 5px;
+}
+
+#openModalButton {
+    margin-left: -13px;
+    margin-top: -7px;
+}
+
+.entrycontainer {
+    display: flex;
+}
+
+.infodiv {
+    margin-left: 15px;
+    display: flex;
+    flex-wrap: wrap;
+}

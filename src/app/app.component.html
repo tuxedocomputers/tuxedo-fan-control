@@ -1,0 +1,133 @@
+<div style="margin-left: 15px; margin-top: 15px;">
+    <div>
+        <div style="width: 150px; display: inline-block">Model:</div><span>{{ modelName }}</span>
+    </div>
+    <div>
+        <div style="width: 150px; display: inline-block">Fan Table:</div><span>{{ fanTableInformation }}</span>
+    </div>
+    <div>
+        <div style="width: 150px; display: inline-block">GPU Informations:</div><span>{{ gpuInformations }}</span>
+    </div>
+    <div>
+        <div style="width: 150px; display: inline-block">Informations:</div><span>{{ informations }}</span>
+    </div>
+
+    <button id="openModalButton" class="btn btn-link" data-toggle="modal" data-target="#infomodal">Program Informations</button>
+</div>
+
+<div class="modal fade" id="infomodal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Program Inforamtions</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <p>TUXEDO Fan Control</p>
+                    <p>TUXEDO Computers GmbH</p>
+                    <p>
+                        Zeppelinstr. 3
+                        <br> 86343 Königsbrunn
+                        <br> Deutschland
+                        <br>
+                    </p>
+
+                    <p>
+                        Telefon: +49 (0) 8231 / 99 19 000 (Mo.-Fr. 9-13 & 14-17 Uhr)
+                        <br> Telefax: +49 (0) 8231 / 99 19 009
+                        <br> Internet: https://www.tuxedocomputers.com
+                        <br> Mail: tux@tuxedocomputers.com
+                        <br>
+                    </p>
+                </div>
+                <div>
+                    <p>Third Party Libaries</p>
+                    <ul>
+                        <li>
+                            <button button type="button" class="btn btn-link" (click)="openLink('https://electronjs.org/');">Electron</button>
+                        </li>
+                        <li>
+                            <button button type="button" class="btn btn-link" (click)="openLink('https://getbootstrap.com/');">Bootstrap</button>
+                        </li>
+                        <li>
+                            <button button type="button" class="btn btn-link" (click)="openLink('https://github.com/nodejs/node-addon-api');">node-addon-api</button>
+                        </li>
+                        <li>
+                            <button button type="button" class="btn btn-link" (click)="openLink('https://angular.io/');">Angular</button>
+                        </li>
+                        <li>
+                            <button button type="button" class="btn btn-link" (click)="openLink('https://www.electron.build/');">electron-builder</button>
+                        </li>
+                        <li>
+                            <button button type="button" class="btn btn-link" (click)="openLink('https://popper.js.org/');">popper.js</button>
+                        </li>
+                        <li>
+                            <button button type="button" class="btn btn-link"(click)="openLink('https://github.com/mishoo/UglifyJS2/tree/harmony');">uglify-es</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-dismiss="modal"
+                        onclick="jQuery('#infomodal').modal('hide');">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="infodiv">
+  <div style="margin-right: 50px;">
+    <h2>CPU</h2>
+
+    <div class="entrycontainer">
+      <div class="entrytitlespan">CPU Temp:</div><span>{{ cpuTemp }}</span>
+    </div>
+    <div class="entrycontainer">
+      <div class="entrytitlespan">CPU FAN Duty:</div><span>{{ cpuFanDuty }}</span>
+    </div>
+    <div class="entrycontainer">
+      <div class="entrytitlespan">CPU FAN RPMs:</div><span>{{ cpuFanRpm }}</span>
+    </div>
+
+    <div class="entrycontainer">
+        <div class="entrytitlespan">Set CPU Fan Duty:</div>
+        <input #cpuDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
+        <button (click)="setCpuFanDuty(cpuDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canCpuDutyChange">Set CPU Fan Duty</button>
+    </div>
+  </div>
+
+  <div>
+    <h2>GPU</h2>
+
+    <div class="entrycontainer">
+      <div class="entrytitlespan">GPU Temp:</div><span>{{ gpuTemp }}</span>
+    </div>
+    <div class="entrycontainer">
+      <div class="entrytitlespan">GPU FAN Duty:</div><span>{{ gpuFanDuty }}</span>
+    </div>
+    <div class="entrycontainer">
+      <div class="entrytitlespan">GPU FAN RPMs:</div><span>{{ gpuFanRpm }}</span>
+    </div>
+
+    <div class="entrycontainer">
+        <div class="entrytitlespan">Set GPU Fan Duty:</div>
+        <input #gpuDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
+        <button (click)="setGpuFanDuty(gpuDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canGpuDutyChange">Set GPU Fan Duty</button>
+    </div>
+  </div>
+</div>
+
+<div>
+    <button (click)="createUnitFile()" [disabled]="!canCreateUnitFile">Create System Unit File</button>
+    <button (click)="removeUnitFile()" [disabled]="!canInteractWithUnitFile">Remove System Unit File</button>
+
+    <button (click)="startDaemon()" [disabled]="!canInteractWithUnitFile">Start Daemon</button>
+    <button (click)="stopDaemon()" [disabled]="!canInteractWithUnitFile">Stop Daemon</button>
+    <button (click)="restartDaemon()" [disabled]="!canInteractWithUnitFile">Restart Daemon</button>
+</div>

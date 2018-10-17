@@ -1,0 +1,11 @@
+[Unit]
+Description=TUXEDO Fan Control
+
+[Service]
+Type=forking
+ExecStart=/bin/bash -c "Xvfb :99 & export DISPLAY=:99 && %TFCPATH% --startdaemon"
+ExecStop=/bin/bash -c "Xvfb :99 & export DISPLAY=:99 && %TFCPATH% --stopdaemon"
+ExecReload=/bin/bash -c "Xvfb :99 & export DISPLAY=:99 && %TFCPATH% --restartdaemon"
+
+[Install]
+WantedBy=multi-user.target
