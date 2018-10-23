@@ -202,6 +202,14 @@ let privateOptions: Array<CommandlineOption> = [
                 fs.writeFileSync(logFilePath, "Error at start daemon, error: " + error + "\n", { flag: "a" });
             }
         }
+    },
+    {
+        option: null,
+        optionLong: "--expert",
+        description: "",
+        action: (arg, index, array) => { 
+            (<any>global).exportMode = true;
+         }
     }
 ];
 

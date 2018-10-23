@@ -21,6 +21,15 @@ export class AppModule
     {
         Environment.setDaemonMode(false);
 
+        if((<any>window).require("electron").remote.getGlobal("exportMode"))
+        {
+            Environment.setEnvironmentVariable("exportMode", true, "electron");
+        }
+        else
+        {
+            Environment.setEnvironmentVariable("exportMode", false, "electron");
+        }
+
         Environment.setEnvironmentVariable("fs", (<any>window).require("fs"), "electron");
         Environment.setEnvironmentVariable("os", (<any>window).require("os"), "electron");
         Environment.setEnvironmentVariable("path", (<any>window).require("path"), "electron");

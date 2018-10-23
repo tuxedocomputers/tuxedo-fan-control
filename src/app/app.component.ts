@@ -35,6 +35,7 @@ export class AppComponent implements OnInit, OnDestroy
 
     public canCreateUnitFile: boolean = true;
     public canInteractWithUnitFile: boolean = true;
+    public expertMode: boolean = false;
 
     private _updateValuesWorker: any;
 
@@ -46,6 +47,8 @@ export class AppComponent implements OnInit, OnDestroy
             this.canInteractWithUnitFile = this.canCreateUnitFile = this.isUserRoot = false;
             return;
         }
+
+        this.expertMode = Environment.getObject("exportMode");
 
         System.logMessage("AppComponent - ngOnInit - Setup logic");
 

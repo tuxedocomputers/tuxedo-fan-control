@@ -95,7 +95,7 @@
       <div class="entrytitlespan">CPU FAN RPMs:</div><span>{{ cpuFanRpm }}</span>
     </div>
 
-    <div class="entrycontainer">
+    <div class="entrycontainer" [hidden]="!expertMode">
         <div class="entrytitlespan">Set CPU Fan Duty:</div>
         <input #cpuDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
         <button (click)="setCpuFanDuty(cpuDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canCpuDutyChange">Set CPU Fan Duty</button>
@@ -115,7 +115,7 @@
       <div class="entrytitlespan">GPU FAN RPMs:</div><span>{{ gpuFanRpm }}</span>
     </div>
 
-    <div class="entrycontainer">
+    <div class="entrycontainer" [hidden]="!expertMode">
         <div class="entrytitlespan">Set GPU Fan Duty:</div>
         <input #gpuDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
         <button (click)="setGpuFanDuty(gpuDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canGpuDutyChange">Set GPU Fan Duty</button>
@@ -123,7 +123,7 @@
   </div>
 </div>
 
-<div>
+<div style="margin-top: 10px;">
     <button (click)="createUnitFile()" [disabled]="!canCreateUnitFile">Create System Unit File</button>
     <button (click)="removeUnitFile()" [disabled]="!canInteractWithUnitFile">Remove System Unit File</button>
 

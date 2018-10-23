@@ -2,8 +2,9 @@
 
 - [Building](#building)
 - [Hidden Start Parameters](#hidden-start-parameters)
-    - [--debugfan](#debugfan)
-    - [--daemon](#daemon)
+    - [--debugfan](#--debugfan)
+    - [--daemon](#--daemon)
+    - [--expert](#--expert)
 - [Paths and Names](#paths-and-names)
 - [Known Issues](#known-issues)
     - [Control more as One GPU Fan](#control-more-as-one-gpu-fan)
@@ -24,6 +25,9 @@ With this Parameter start the TUXEDO Fan Control with the Chrome Developer Tools
 
 ## --daemon
 With this Parameter starts the TUXEDO Fan Control in the Daemon Mode.
+
+## --expert
+With this Parameter can set custom fan duty in UI.
 
 # Paths and Names
 

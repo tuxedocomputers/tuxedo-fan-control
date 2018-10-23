@@ -139,7 +139,6 @@ export class System
     public static logMessage(message: string, logPath: string = System.LOGFILE_PATH, startWithSemicolon: boolean = true, logTime: boolean = true): void
     {
         console.log(message);
-        console.log(Environment.getEnvironment());
         if(startWithSemicolon)
         {
             message = "; " + message;
