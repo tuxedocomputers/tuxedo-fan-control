@@ -10,10 +10,19 @@
 
 .entrycontainer {
     display: flex;
+    min-width: 365px;
 }
 
 .infodiv {
     margin-left: 15px;
     display: flex;
     flex-wrap: wrap;
+}
+
+.servicefileactions {
+    margin-top: 10px;
+}
+
+.servicefileactions > button { 
+    margin-left: 15px;
 }
