@@ -16,8 +16,8 @@ if [ -f "/usr/bin/tuxedofancontrol" ]; then
     rm /usr/bin/tuxedofancontrol
 fi
 
-if [ -f "/lib/systemd/system/tuxedofancontrol.service" ]; then
-    rm /lib/systemd/system/tuxedofancontrol.service
+if [ -f "/etc/systemd/system/tuxedofancontrol.service" ]; then
+    rm /etc/systemd/system/tuxedofancontrol.service
 fi
 
 rm -rf /var/log/tuxedo-fan/

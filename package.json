@@ -55,7 +55,7 @@
         },
         "rpm": {
             "depends": [
-                "xorg-x11-server-Xvfb"
+                "xorg-x11-Xvfb"
             ],
             "fpm": [
                 "--after-install=./scripts/after_install.sh",

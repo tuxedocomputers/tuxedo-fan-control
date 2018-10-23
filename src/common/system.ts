@@ -5,7 +5,7 @@ import { Environment } from "./environment";
  */
 export class System
 {
-    public static readonly SYSTEMD_SERVICE_FILE: string = "/lib/systemd/system/tuxedofancontrol.service";
+    public static readonly SYSTEMD_SERVICE_FILE: string = "/etc/systemd/system/tuxedofancontrol.service";
     public static readonly SYSTEMD_SERVICE_NAME: string = "tuxedofancontrol.service";
     public static readonly LOGFILE_PATH_DAEMON: string = "/var/log/tuxedo-fan/tuxedo-fan-daemon.log";
     public static readonly LOGFILE_PATH: string = "/var/log/tuxedo-fan/tuxedo-fan.log";

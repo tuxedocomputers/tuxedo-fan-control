@@ -17,14 +17,14 @@ With this Program can you set manually the fan speed of your TUXEDO Notebook. Yo
     - [Systemd - Control the Daemon](#systemd---control-the-daemon)
 - [Commandline Interface (CLI)](#commandline-interface-cli)
     - [Parameter](#parameter)
-        - [-h / --help](#h----help)
-        - [-v / --version](#v----version)
-        - [--startdaemon](#startdaemon)
-        - [--stopdaemon](#stopdaemon)
-        - [--restartdaemon](#restartdaemon)
-        - [--statusdaemon](#statusdaemon)
-        - [--createunitfile](#createunitfile)
-        - [--removeunitfile](#removeunitfile)
+        - [-h / --help](#-h----help)
+        - [-v / --version](#-v----version)
+        - [--startdaemon](#--startdaemon)
+        - [--stopdaemon](#--stopdaemon)
+        - [--restartdaemon](#--restartdaemon)
+        - [--statusdaemon](#--statusdaemon)
+        - [--createunitfile](#--createunitfile)
+        - [--removeunitfile](#--removeunitfile)
 
 <!-- /TOC -->
 
@@ -68,7 +68,7 @@ Log dir: /var/log/tuxedo-fan/
 The TUXEDO Fan Control Daemon check every second the CPU and GPU temperature and set the fan duty, if need it.
 
 ## Systemd - Create Service File
-Create the Service file under /lib/systemd/system/ with the Name "tuxedofancontrol.service"
+Create the Service file under /etc/systemd/system/ with the Name "tuxedofancontrol.service"
 
 ```shell
 [Unit]

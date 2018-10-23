@@ -33,7 +33,7 @@ With this Parameter can set custom fan duty in UI.
 
 | File                  | Path                                          |
 |-----------------------|-----------------------------------------------|
-| systemd Service File  | /lib/systemd/system/tuxedofancontrol.service  |
+| systemd Service File  | /etc/systemd/system/tuxedofancontrol.service  |
 | systemd Service Name  | tuxedofancontrol                              |
 | Log File              | /var/log/tuxedo-fan/tuxedo-fan.log            |
 | Log File Daemon       | /var/log/tuxedo-fan/tuxedo-fan-daemon.log     |
