@@ -218,18 +218,18 @@ export class AppComponent implements OnInit, OnDestroy
     public startDaemon(): void
     {
         System.logMessage("AppComponent - startDaemon");
-        (<any>window).require("../common/daemon").start();
+        System.startDaemon();
     }
 
     public stopDaemon(): void
     {
         System.logMessage("AppComponent - stopDaemon");
-        (<any>window).require("../common/daemon").stop();
+        System.stopDaemon();
     }
 
     public restartDaemon(): void
     {
         System.logMessage("AppComponent - restartDaemon");
-        (<any>window).require("../common/daemon").restart();
+        System.restartDaemon();
     }
 }

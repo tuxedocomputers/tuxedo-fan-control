@@ -10,6 +10,7 @@ export class System
     public static readonly LOGFILE_PATH_DAEMON: string = "/var/log/tuxedo-fan/tuxedo-fan-daemon.log";
     public static readonly LOGFILE_PATH: string = "/var/log/tuxedo-fan/tuxedo-fan.log";
     public static readonly PID_FILE_PATH: string = "/var/run/tuxedo-fan-daemon.pid";
+    public static readonly XLOCK_FILE: string = "/tmp/.X99-lock";
 
     /**
      * Check if running the Application inside Electron
@@ -151,6 +152,54 @@ export class System
         else
         {
             Environment.getObject("fs").writeFileSync(logPath, message + "\n", { flag: "a" });
+        }
+    }
+
+    /**
+     * Starts the Daemon over systemd CLI
+     */
+    public static startDaemon(): void
+    {
+        try
+        {
+            let child_process = Environment.getObject("child_process");
+            child_process.execSync("systemctl start " + this.SYSTEMD_SERVICE_NAME);
+        }
+        catch(error)
+        {
+            this.logMessage("Error at start daemon over systemd. Error: " + error);
+        }
+    }
+
+    /**
+     * Stops the Daemon over systemd CLI
+     */
+    public static stopDaemon(): void
+    {
+        try
+        {
+            let child_process = Environment.getObject("child_process");
+            child_process.execSync("systemctl stop " + this.SYSTEMD_SERVICE_NAME);
+        }
+        catch(error)
+        {
+            this.logMessage("Error at stop daemon over systemd. Error: " + error);
+        }
+    }
+
+    /**
+     * Restarts the Daemon over systemd CLI
+     */
+    public static restartDaemon(): void
+    {
+        try
+        {
+            let child_process = Environment.getObject("child_process");
+            child_process.execSync("systemctl restart " + this.SYSTEMD_SERVICE_NAME);
+        }
+        catch(error)
+        {
+            this.logMessage("Error at restart daemon over systemd. Error: " + error);
         }
     }
 }

@@ -20,6 +20,11 @@ export function start(): void
             return;
         }
 
+        if(fs.existsSync(System.XLOCK_FILE))
+        {
+            fs.unlinkSync(System.XLOCK_FILE);
+        }
+
         let daemonPath: string = process.execPath;
         let path: string = daemonPath + " ./output/dist/ --daemon";
         fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "daemonpath : " + path + "\n", { flag: "a" });
@@ -64,6 +69,7 @@ export function stop(): void
         try
         {
             process.kill(daemonPid, "SIGINT");
+            fs.unlinkSync(System.XLOCK_FILE);
         }
         catch (error)
         {
