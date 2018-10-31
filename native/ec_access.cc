@@ -3,32 +3,41 @@
 #include <sys/io.h>
 #include <unistd.h>
 
-#define EC_SC 0x66
-#define EC_DATA 0x62
+// #define EC_SC 0x66
+#define EC_COMMAND_PORT         0x66
+//#define EC_DATA 0x62
+#define EC_DATA_PORT            0x62
 
-#define IBF 1
-#define OBF 0
-#define EC_SC_READ_CMD 0x80
+#define IBF                     1
+#define OBF                     0
+#define EC_SC_READ_CMD          0x80
 
-#define EC_REG_SIZE 0x100
+#define EC_REG_SIZE             0x100
 
-#define EC_REG_CPU_FAN_DUTY 0xCE
-#define EC_REG_CPU_TEMP 0x07
-#define EC_REG_CPU_FAN_RPMS_HI 0xD0
-#define EC_REG_CPU_FAN_RPMS_LO 0xD1
-#define EC_REG_GPU_FAN_RPMS_HI 0xD2
-#define EC_REG_GPU_FAN_RPMS_LO 0xD3
-#define EC_REG_GPU_TEMP 0xCD
-#define EC_REG_GPU_FAN_DUTY 0xCF
+#define EC_REG_CPU_FAN_DUTY     0xCE
+#define EC_REG_CPU_TEMP         0x07
+#define EC_REG_CPU_FAN_RPMS_HI  0xD0
+#define EC_REG_CPU_FAN_RPMS_LO  0xD1
+#define EC_REG_GPU_FAN_RPMS_HI  0xD2
+#define EC_REG_GPU_FAN_RPMS_LO  0xD3
+#define EC_REG_GPU_TEMP         0xCD
+#define EC_REG_GPU_FAN_DUTY     0xCF
+#define EC_REG_TEMP             0x9E
 
-static int ec_init()
+#define TEMP                    0x9E
+
+// ioperm - set port input/output permissions
+//
+// On success, zero is returned.  On error, -1 is returned, and errno is
+// set appropriately.
+static int EcInit()
 {
-    if (ioperm(EC_DATA, 1, 1) != 0)
+    if (ioperm(EC_DATA_PORT, 1, 1) != 0)
     {
         return EXIT_FAILURE;
     }
 
-    if (ioperm(EC_SC, 1, 1) != 0)
+    if (ioperm(EC_COMMAND_PORT, 1, 1) != 0)
     {
         return EXIT_FAILURE;
     }
@@ -36,7 +45,7 @@ static int ec_init()
     return EXIT_SUCCESS;
 }
 
-static int ec_io_wait(const uint32_t port, const uint32_t flag, const char value)
+static int EcIoWait(const uint32_t port, const uint32_t flag, const char value)
 {
     uint8_t data = inb(port);
     int i = 0;
@@ -55,48 +64,252 @@ static int ec_io_wait(const uint32_t port, const uint32_t flag, const char value
     return EXIT_SUCCESS;
 }
 
-static uint8_t ec_io_read(const uint32_t port)
+static uint8_t EcIoRead(const uint32_t port)
 {
-    ec_io_wait(EC_SC, IBF, 0);
-    outb(EC_SC_READ_CMD, EC_SC);
+    EcIoWait(EC_COMMAND_PORT, IBF, 0);
+    outb(EC_SC_READ_CMD, EC_COMMAND_PORT);
 
-    ec_io_wait(EC_SC, IBF, 0);
-    outb(port, EC_DATA);
+    EcIoWait(EC_COMMAND_PORT, IBF, 0);
+    outb(port, EC_DATA_PORT);
 
-    ec_io_wait(EC_SC, OBF, 1);
-    uint8_t value = inb(EC_DATA);
+    EcIoWait(EC_COMMAND_PORT, OBF, 1);
+    uint8_t value = inb(EC_DATA_PORT);
 
     return value;
+}
+
+static void EcFlush()
+{
+    while ((inb(EC_COMMAND_PORT) & 0x1) == 0x1)
+    {
+        inb(EC_DATA_PORT);
+    }
+}
+
+static int ReadByte()
+{
+    int i = 1000000;
+    int value = 0;
+    while ((inb(EC_COMMAND_PORT) & 0x1) == 0 && i > 0)
+    {
+        i -= 1;
+    }
+
+    if (i == 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return inb(EC_DATA_PORT);
+    }
+}
+
+static int SendCommand(int command)
+{
+    int i = 1000000;
+    while ((inb(EC_COMMAND_PORT) & 0x2) == 0x2 && i > 0)
+    {
+        i -= 1;
+    }
+
+    if (i == 0)
+    {
+        return EXIT_FAILURE;
+    }
+    else
+    {
+        outb(command, EC_COMMAND_PORT);
+        return EXIT_SUCCESS;
+    }
+}
+
+static int WriteData(int data)
+{
+    int i = 1000000;
+    while ((inb(EC_COMMAND_PORT) & 0x2) == 0x2 && i > 0)
+    {
+        i -= 1;
+    }
+
+    if (i == 0)
+    {
+        return EXIT_FAILURE;
+    }
+    else
+    {
+        outb(data, EC_DATA_PORT);
+        return EXIT_SUCCESS;
+    }
+}
+
+static int ReadValue(int command)
+{
+    EcInit();
+    //EcFlush();
+    SendCommand(command);
+    return ReadByte();
+}
+
+int GetTempFanDuty(int index, int *remote, int *local, int *fan_duty)
+{
+    SendCommand(TEMP);
+    WriteData(index);
+    *remote = ReadByte();
+    *local = ReadByte();
+    *fan_duty = ReadByte();
+
+    return 0;
+}
+
+Napi::Number GetCpuFanDutyNew(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    int remote = 0;
+    int local = 0;
+    int fan_duty = 0;
+    float fan_duty_perc = 0;
+
+    GetTempFanDuty(1, &remote, &local, &fan_duty);
+    fan_duty_perc = ((float)fan_duty / (float)255) * 100;
+
+    return Napi::Number::New(env, ((int)(fan_duty_perc + 0.5)));
+}
+
+Napi::Number GetCpuFanTempLocal(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    int remote = 0;
+    int local = 0;
+    int fan_duty = 0;
+    float fan_duty_perc = 0;
+
+    GetTempFanDuty(1, &remote, &local, &fan_duty);
+
+    return Napi::Number::New(env, local);
+}
+
+Napi::Number GetCpuFanTempRemote(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    int remote = 0;
+    int local = 0;
+    int fan_duty = 0;
+    float fan_duty_perc = 0;
+
+    GetTempFanDuty(1, &remote, &local, &fan_duty);
+
+    return Napi::Number::New(env, remote);
+}
+
+Napi::Number GetGpuFanDutyNew(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    int remote = 0;
+    int local = 0;
+    int fan_duty = 0;
+    float fan_duty_perc = 0;
+
+    GetTempFanDuty(2, &remote, &local, &fan_duty);
+    fan_duty_perc = ((float)fan_duty / (float)255) * 100;
+
+    return Napi::Number::New(env, ((int)(fan_duty_perc + 0.5)));
+}
+
+Napi::Number GetGpuFanTempLocal(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    int remote = 0;
+    int local = 0;
+    int fan_duty = 0;
+    float fan_duty_perc = 0;
+
+    GetTempFanDuty(2, &remote, &local, &fan_duty);
+
+    return Napi::Number::New(env, local);
+}
+
+Napi::Number GetGpuFanTempRemote(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    int remote = 0;
+    int local = 0;
+    int fan_duty = 0;
+    float fan_duty_perc = 0;
+
+    GetTempFanDuty(2, &remote, &local, &fan_duty);
+
+    return Napi::Number::New(env, remote);
+}
+
+Napi::Number GetGpuTwoFanDutyNew(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    int remote = 0;
+    int local = 0;
+    int fan_duty = 0;
+    float fan_duty_perc = 0;
+
+    GetTempFanDuty(3, &remote, &local, &fan_duty);
+    fan_duty_perc = ((float)fan_duty / (float)255) * 100;
+
+    return Napi::Number::New(env, ((int)(fan_duty_perc + 0.5)));
+}
+
+Napi::Number GetGpuTwoFanTempLocal(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    int remote = 0;
+    int local = 0;
+    int fan_duty = 0;
+    float fan_duty_perc = 0;
+
+    GetTempFanDuty(3, &remote, &local, &fan_duty);
+
+    return Napi::Number::New(env, local);
+}
+
+Napi::Number GetGpuTwoFanTempRemote(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    int remote = 0;
+    int local = 0;
+    int fan_duty = 0;
+    float fan_duty_perc = 0;
+
+    GetTempFanDuty(3, &remote, &local, &fan_duty);
+
+    return Napi::Number::New(env, remote);
 }
 
 Napi::Number GetRawCpuFanDuty(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
+    //int value = ReadValue(EC_REG_CPU_FAN_DUTY);
+    EcInit();
+    int value = EcIoRead(EC_REG_CPU_FAN_DUTY);
 
-    ec_init();
-    int raw_duty = ec_io_read(EC_REG_CPU_FAN_DUTY);
-
-    return Napi::Number::New(env, raw_duty);
+    return Napi::Number::New(env, value);
 }
 
 Napi::Number GetCpuFanDuty(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
+    //int value = ReadValue(EC_REG_CPU_FAN_DUTY);
+    EcInit();
+    int value = EcIoRead(EC_REG_CPU_FAN_DUTY);
 
-    ec_init();
-    int raw_duty = ec_io_read(EC_REG_CPU_FAN_DUTY);
-
-    return Napi::Number::New(env, ((int) ((double) raw_duty / 255.0 * 100.0)));
+    return Napi::Number::New(env, ((int) ((double) value / 255.0 * 100.0)));
 }
 
 Napi::Number GetCpuTemp(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
+    //int value = ReadValue(EC_REG_CPU_TEMP);
+    EcInit();
+    int value = EcIoRead(EC_REG_CPU_TEMP);
 
-    ec_init();
-    int cpu_temp = ec_io_read(EC_REG_CPU_TEMP);
-
-    return Napi::Number::New(env, cpu_temp);
+    return Napi::Number::New(env, value);
 }
 
 static int calculate_fan_rpms(int raw_rpm_high, int raw_rpm_low)
@@ -109,10 +322,11 @@ Napi::Number GetCpuFanRpm(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
 
-    ec_init();
-
-    int raw_rpm_hi = ec_io_read(EC_REG_CPU_FAN_RPMS_HI);
-    int raw_rpm_lo = ec_io_read(EC_REG_CPU_FAN_RPMS_LO);
+    // int raw_rpm_hi = ReadValue(EC_REG_CPU_FAN_RPMS_HI);
+    // int raw_rpm_lo = ReadValue(EC_REG_CPU_FAN_RPMS_LO);
+    EcInit();
+    int raw_rpm_hi = EcIoRead(EC_REG_CPU_FAN_RPMS_HI);
+    int raw_rpm_lo = EcIoRead(EC_REG_CPU_FAN_RPMS_LO);;
 
     return Napi::Number::New(env, calculate_fan_rpms(raw_rpm_hi, raw_rpm_lo));
 }
@@ -120,57 +334,58 @@ Napi::Number GetCpuFanRpm(const Napi::CallbackInfo& info)
 Napi::Number GetGpuTemp(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
+    // int value = ReadValue(EC_REG_GPU_TEMP);
+    EcInit();
+    int value = EcIoRead(EC_REG_GPU_TEMP);
 
-    ec_init();
-    int gpu_temp = ec_io_read(EC_REG_GPU_TEMP);
-
-    return Napi::Number::New(env, gpu_temp);
+    return Napi::Number::New(env, value);
 }
 
 Napi::Number GetRawGpuFanDuty(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
+    // int value = ReadValue(EC_REG_GPU_FAN_DUTY);
+    EcInit();
+    int value = EcIoRead(EC_REG_GPU_FAN_DUTY);
 
-    ec_init();
-    int raw_duty = ec_io_read(EC_REG_GPU_FAN_DUTY);
-
-    return Napi::Number::New(env, raw_duty);
+    return Napi::Number::New(env, value);
 }
 
 Napi::Number GetGpuFanDuty(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
+    // int value = ReadValue(EC_REG_GPU_FAN_DUTY);
+    EcInit();
+    int value = EcIoRead(EC_REG_GPU_FAN_DUTY);
 
-    ec_init();
-    int raw_duty = ec_io_read(EC_REG_GPU_FAN_DUTY);
-
-    return Napi::Number::New(env, ((int) ((double) raw_duty / 255.0 * 100.0)));
+    return Napi::Number::New(env, ((int) ((double) value / 255.0 * 100.0)));
 }
 
 Napi::Number GetGpuFanRpm(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
 
-    ec_init();
-
-    int raw_rpm_hi = ec_io_read(EC_REG_GPU_FAN_RPMS_HI);
-    int raw_rpm_lo = ec_io_read(EC_REG_GPU_FAN_RPMS_LO);
+    // int raw_rpm_hi = ReadValue(EC_REG_GPU_FAN_RPMS_HI);
+    // int raw_rpm_lo = ReadValue(EC_REG_GPU_FAN_RPMS_LO);
+    EcInit();
+    int raw_rpm_hi = EcIoRead(EC_REG_GPU_FAN_RPMS_HI);
+    int raw_rpm_lo = EcIoRead(EC_REG_GPU_FAN_RPMS_LO);
 
     return Napi::Number::New(env, calculate_fan_rpms(raw_rpm_hi, raw_rpm_lo));
 }
 
 static int ec_io_do(const uint32_t cmd, const uint32_t port, const uint8_t value)
 {
-    ec_io_wait(EC_SC, IBF, 0);
-    outb(cmd, EC_SC);
+    EcIoWait(EC_COMMAND_PORT, IBF, 0);
+    outb(cmd, EC_COMMAND_PORT);
 
-    ec_io_wait(EC_SC, IBF, 0);
-    outb(port, EC_DATA);
+    EcIoWait(EC_COMMAND_PORT, IBF, 0);
+    outb(port, EC_DATA_PORT);
 
-    ec_io_wait(EC_SC, IBF, 0);
-    outb(value, EC_DATA);
+    EcIoWait(EC_COMMAND_PORT, IBF, 0);
+    outb(value, EC_DATA_PORT);
 
-    return ec_io_wait(EC_SC, IBF, 0);
+    return EcIoWait(EC_COMMAND_PORT, IBF, 0);
 }
 
 static int ec_write_cpu_fan_duty(uint32_t duty_percentage)
@@ -260,6 +475,8 @@ Napi::Boolean SetGpuFanDuty(const Napi::CallbackInfo& info)
 
 Napi::Object init(Napi::Env env, Napi::Object exports)
 {
+    printf("test: haha\n");
+
     // CPU Methods
     // CPU Fan Duty - Read
     exports.Set(Napi::String::New(env, "getCpuFanDuty"), Napi::Function::New(env, GetCpuFanDuty));
@@ -283,6 +500,24 @@ Napi::Object init(Napi::Env env, Napi::Object exports)
 
     // Set GPU Fan Duty - Write
     exports.Set(Napi::String::New(env, "setGpuFanDuty"), Napi::Function::New(env, SetGpuFanDuty));
+
+    // GetCpuFanDutyNew
+    // GetGpuFanDutyNew
+    // GetGpuTwoFanDutyNew
+    // GetGpuTwoFanTempLocal
+    // GetGpuTwoFanTempRemote
+
+    exports.Set(Napi::String::New(env, "getCpuFanDutyNew"), Napi::Function::New(env, GetCpuFanDutyNew));
+    exports.Set(Napi::String::New(env, "getCpuFanTempLocal"), Napi::Function::New(env, GetCpuFanTempLocal));
+    exports.Set(Napi::String::New(env, "getCpuFanTempRemote"), Napi::Function::New(env, GetCpuFanTempRemote));
+
+    exports.Set(Napi::String::New(env, "getGpuFanDutyNew"), Napi::Function::New(env, GetGpuFanDutyNew));
+    exports.Set(Napi::String::New(env, "getGpuFanTempLocal"), Napi::Function::New(env, GetGpuFanTempLocal));
+    exports.Set(Napi::String::New(env, "getGpuFanTempRemote"), Napi::Function::New(env, GetCpuFanTempRemote));
+
+    exports.Set(Napi::String::New(env, "getGpuTwoFanDutyNew"), Napi::Function::New(env, GetGpuTwoFanDutyNew));
+    exports.Set(Napi::String::New(env, "getGpuTwoFanTempLocal"), Napi::Function::New(env, GetGpuTwoFanTempLocal));
+    exports.Set(Napi::String::New(env, "getGpuTwoFanTempRemote"), Napi::Function::New(env, GetGpuTwoFanTempRemote));
 
     return exports;
 };

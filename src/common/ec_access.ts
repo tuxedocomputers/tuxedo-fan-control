@@ -15,6 +15,7 @@ export function getCpuTemp(): number
     }
     catch (error)
     {
+        console.log("getCpuTemp Error: " + error);
         return 0;
     }
 }
@@ -33,6 +34,7 @@ export function getCpuFanDuty(): number
     }
     catch (error)
     {
+        console.log("getCpuFanDuty Error: " + error);
         return 0;
     }
 }
@@ -51,6 +53,7 @@ export function getRawCpuFanDuty(): number
     }
     catch (error)
     {
+        console.log("getRawCpuFanDuty Error: " + error);
         return 0;
     }
 }
@@ -69,6 +72,7 @@ export function getCpuFanRpm(): number
     }
     catch (error)
     {
+        console.log("getCpuFanRpm Error: " + error);
         return 0;
     }
 }
@@ -87,6 +91,7 @@ export function getGpuTemp(): number
     }
     catch (error)
     {
+        console.log("getGpuTemp Error: " + error);
         return 0;
     }
 }
@@ -105,6 +110,7 @@ export function getGpuFanDuty(): number
     }
     catch (error)
     {
+        console.log("getGpuFanDuty Error: " + error);
         return 0;
     }
 }
@@ -123,6 +129,7 @@ export function getRawGpuFanDuty(): number
     }
     catch (error)
     {
+        console.log("getRawGpuFanDuty Error: " + error);
         return 0;
     }
 }
@@ -141,6 +148,7 @@ export function getGpuFanRpm(): number
     }
     catch (error)
     {
+        console.log("getGpuFanRpm Error: " + error);
         return 0;
     }
 }
@@ -163,6 +171,7 @@ export function setCpuFanDuty(value: number): boolean
     }
     catch (error)
     {
+        console.log("setCpuFanDuty Error: " + error);
         return false;
     }
 }
@@ -185,6 +194,7 @@ export function setGpuFanDuty(value: number): boolean
     }
     catch (error)
     {
+        console.log("setGpuFanDuty Error: " + error);
         Environment.getObject("log")("setGpuFanDuty error: " + error);
 
         return false;
