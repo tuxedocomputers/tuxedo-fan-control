@@ -17,13 +17,13 @@ export class AppComponent implements OnInit, OnDestroy
     public gpuInformations: string;
     public informations: string = "--";
 
-    public cpuTemp: number;
-    public cpuFanDuty: number;
-    public cpuFanRpm: number;
+    public cpuTemp: number = 0;
+    public cpuFanDuty: number = 0;
+    public cpuFanRpm: number = 0;
 
-    public gpuTemp: number;
-    public gpuFanDuty: number;
-    public gpuFanRpm: number;
+    public gpuTemp: number = 0;
+    public gpuFanDuty: number = 0;
+    public gpuFanRpm: number = 0;
 
     public canCpuDutyChange: boolean = true;
     public canGpuDutyChange: boolean = true;
@@ -105,9 +105,12 @@ export class AppComponent implements OnInit, OnDestroy
         this.canCpuDutyChange = this.canGpuDutyChange = this.isDaemonRunning;
         this.informations = !this.isDaemonRunning ? "Daemon is active" : "";
 
-        this.cpuTemp = ec_access.getCpuTemp();
-        this.cpuFanDuty = ec_access.getCpuFanDuty();
-        this.cpuFanRpm = ec_access.getCpuFanRpm();
+        this.cpuTemp = ec_access.getTempRemote(ec_access.FAN.CPUDATA);
+        for(let i = 0; i < 100000; i++) {}
+        this.cpuFanDuty = ec_access.getFanDuty(ec_access.FAN.CPUDATA);
+        for(let i = 0; i < 100000; i++) {}
+        this.cpuFanRpm = ec_access.getRpm(ec_access.FAN.CPUDATA);
+        for(let i = 0; i < 100000; i++) {}
 
         if(this.cpuTemp >= 70)
         {
@@ -123,9 +126,14 @@ export class AppComponent implements OnInit, OnDestroy
 
         if(System.isNvidiaSmiInstalled())
         {
-            this.gpuTemp = System.getNvidiaTemperature();
-            this.gpuFanDuty = ec_access.getGpuFanDuty();
-            this.gpuFanRpm = ec_access.getGpuFanRpm();
+            //this.gpuTemp = System.getNvidiaTemperature();
+            let temP = ec_access.getTempRemote(ec_access.FAN.GPUONEDATA);
+            for(let i = 0; i < 100000; i++) {}
+            this.gpuTemp = temP;
+            this.gpuFanDuty = ec_access.getFanDuty(ec_access.FAN.GPUONEDATA);
+            for(let i = 0; i < 100000; i++) {}
+            this.gpuFanRpm = ec_access.getRpm(ec_access.FAN.GPUONEDATA);
+            for(let i = 0; i < 100000; i++) {}
 
             if(this.gpuTemp >= 70)
             {

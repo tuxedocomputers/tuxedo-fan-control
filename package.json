@@ -11,8 +11,9 @@
     "private": true,
     "main": "./output/dist/electronmain.js",
     "scripts": {
-        "build": "npm run clean && npm install && ng build --base-href . && ts-node ./scripts/build.ts",
-        "build:prod": "npm run clean && npm install && ng build --prod --base-href . && ts-node ./scripts/build.ts",
+        "build-gyp": "node-gyp rebuild",
+        "build": "npm run clean && node-gyp rebuild && ng build --base-href . && ts-node ./scripts/build.ts",
+        "build:prod": "npm run clean && node-gyp rebuild && ng build --prod --base-href . && ts-node ./scripts/build.ts",
         "start": "electron ./output/dist/",
         "pack": "npm run build && electron-builder",
         "pack:prod": "npm run build:prod && electron-builder",

@@ -1,6 +1,88 @@
 import { System } from "./system";
 import { Environment } from "./environment";
 
+export enum FAN
+{
+    CPUDATA = 1,
+    GPUONEDATA = 2,
+    GPUTWODATA = 3
+}
+
+export function getTempRemote(fan: number): number
+{
+    try
+    {
+        const ec_access = Environment.getObject("ec_access");
+        let temp = ec_access.getRemoteTemp(2);
+        console.log("getTempRemote: " + temp);
+        return temp;
+    }
+    catch (error)
+    {
+        console.log("getTemp (Index: " + fan + ") Error: " + error);
+        return 0;
+    }
+}
+
+export function getTempLocal(fan: FAN): number
+{
+    try
+    {
+        const ec_access = Environment.getObject("ec_access");
+        return ec_access.GetLocalTemp(fan);
+    }
+    catch (error)
+    {
+        console.log("getTemp (Index: " + fan + ") Error: " + error);
+        return 0;
+    }
+}
+
+
+export function getFanDuty(fan: FAN): number
+{
+    try
+    {
+        const ec_access = Environment.getObject("ec_access");
+        return ((ec_access.getRawFanDutyNew(fan) / 255) * 100) + 0.5;
+    }
+    catch (error)
+    {
+        console.log("getFanDuty (Index: " + fan + ") Error: " + error);
+        return 0;
+    }
+}
+
+export function getRpm(fan: FAN): number
+{
+    try
+    {
+        const ec_access = Environment.getObject("ec_access");
+        //return ec_access.getFanDutyNew(fan);
+        return ec_access.getFanRpm(fan);
+    }
+    catch (error)
+    {
+        console.log("getFanRpm (Index: " + fan + ") Error: " + error);
+        return 0;
+    }
+}
+
+
+export function getRawFanDuty(fan: FAN): number
+{
+    try
+    {
+        const ec_access = Environment.getObject("ec_access");
+        return ec_access.getRawFanDutyNew(fan);
+    }
+    catch (error)
+    {
+        console.log("getRawFanDuty (Index: " + fan + ") Error: " + error);
+        return 0;
+    }
+}
+
 /**
  * Get the CPU temperature
  *
