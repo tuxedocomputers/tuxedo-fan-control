@@ -21,9 +21,13 @@ export class AppComponent implements OnInit, OnDestroy
     public cpuFanDuty: number = 0;
     public cpuFanRpm: number = 0;
 
-    public gpuTemp: number = 0;
-    public gpuFanDuty: number = 0;
-    public gpuFanRpm: number = 0;
+    public gpuOneTemp: number = 0;
+    public gpuOneFanDuty: number = 0;
+    public gpuOneFanRpm: number = 0;
+
+    public gpuTwoTemp: number = 0;
+    public gpuTwoFanDuty: number = 0;
+    public gpuTwoFanRpm: number = 0;
 
     public canCpuDutyChange: boolean = true;
     public canGpuDutyChange: boolean = true;
@@ -37,6 +41,8 @@ export class AppComponent implements OnInit, OnDestroy
     public canInteractWithUnitFile: boolean = true;
     public expertMode: boolean = false;
 
+    public nvidaCardExists: boolean = false;
+
     private _updateValuesWorker: any;
 
     ngOnInit(): void
@@ -49,6 +55,9 @@ export class AppComponent implements OnInit, OnDestroy
         }
 
         this.expertMode = Environment.getObject("exportMode");
+        
+        this.nvidaCardExists = System.checkIfNvidiaCardExists();
+        System.logMessage("Nvidia Card Exist: " + this.nvidaCardExists);
 
         System.logMessage("AppComponent - ngOnInit - Setup logic");
 
@@ -70,21 +79,28 @@ export class AppComponent implements OnInit, OnDestroy
             this.fanTableInformation = "No Fan Table found";
         }
 
-        if(this._fanTable.hasGpu)
+        if(this.nvidaCardExists)
         {
-            System.logMessage("AppComponent - ngOnInit - GPU Fan Table exist");
-            this.gpuInformations = "GPU Fan Table exist";
+            if(this._fanTable.hasGpu)
+            {
+                System.logMessage("AppComponent - ngOnInit - GPU Fan Table exist");
+                this.gpuInformations = "GPU Fan Table exist";
+            }
+            else
+            {
+                System.logMessage("AppComponent - ngOnInit - NO GPU Fan Table exist");
+                this.gpuInformations = "NO GPU Fan Table exist";
+            }
+    
+            if(this._fanTable.hasGpu && !System.isNvidiaSmiInstalled())
+            {
+                System.logMessage("AppComponent - ngOnInit - NVIDIA SMI is missing");
+                this.gpuInformations += ", NVIDIA SMI is missing";
+            }
         }
         else
         {
-            System.logMessage("AppComponent - ngOnInit - NO GPU Fan Table exist");
-            this.gpuInformations = "NO GPU Fan Table exist";
-        }
-
-        if(this._fanTable.hasGpu && !System.isNvidiaSmiInstalled())
-        {
-            System.logMessage("AppComponent - ngOnInit - NVIDIA SMI is missing");
-            this.gpuInformations += ", NVIDIA SMI is missing";
+            this.gpuInformations = "No GPU exist"
         }
     }
 
@@ -124,26 +140,47 @@ export class AppComponent implements OnInit, OnDestroy
             }
         }
 
-        if(System.isNvidiaSmiInstalled())
+        if(this.nvidaCardExists)
         {
-            //this.gpuTemp = System.getNvidiaTemperature();
-            let temP = ec_access.getTempRemote(ec_access.FAN.GPUONEDATA);
-            for(let i = 0; i < 100000; i++) {}
-            this.gpuTemp = temP;
-            this.gpuFanDuty = ec_access.getFanDuty(ec_access.FAN.GPUONEDATA);
-            for(let i = 0; i < 100000; i++) {}
-            this.gpuFanRpm = ec_access.getRpm(ec_access.FAN.GPUONEDATA);
+            this.gpuOneTemp = ec_access.getTempRemote(ec_access.FAN.GPUONEDATA);;
             for(let i = 0; i < 100000; i++) {}
 
-            if(this.gpuTemp >= 70)
+            this.gpuOneFanDuty = ec_access.getFanDuty(ec_access.FAN.GPUONEDATA);
+            for(let i = 0; i < 100000; i++) {}
+
+            this.gpuOneFanRpm = ec_access.getRpm(ec_access.FAN.GPUONEDATA);
+            for(let i = 0; i < 100000; i++) {}
+
+            if(this.gpuOneTemp >= 70)
             {
                 if(this.informations === "")
                 {
-                    this.informations += "High GPU Temerature";
+                    this.informations += "High GPU 1 Temerature";
                 }
                 else
                 {
-                    this.informations += ", High GPU Temerature";
+                    this.informations += ", High GPU 1 Temerature";
+                }
+            }
+
+            this.gpuTwoTemp = ec_access.getTempRemote(ec_access.FAN.GPUTWODATA);;
+            for(let i = 0; i < 100000; i++) {}
+
+            this.gpuTwoFanDuty = ec_access.getFanDuty(ec_access.FAN.GPUTWODATA);
+            for(let i = 0; i < 100000; i++) {}
+
+            this.gpuTwoFanRpm = ec_access.getRpm(ec_access.FAN.GPUTWODATA);
+            for(let i = 0; i < 100000; i++) {}
+
+            if(this.gpuTwoTemp >= 70)
+            {
+                if(this.informations === "")
+                {
+                    this.informations += "High GPU 2 Temerature";
+                }
+                else
+                {
+                    this.informations += ", High GPU 2 Temerature";
                 }
             }
         }

@@ -42,7 +42,7 @@ export class DaemonWorker
         {
             System.logMessage("\n", System.LOGFILE_PATH_DAEMON, false, false);
 
-            let cpuTemp = EC.getCpuTemp();
+            let cpuTemp = EC.getTempRemote(EC.FAN.CPUDATA);
             let cpuSetDuty: number = -1;
 
             let gpuTemp: number = -1;

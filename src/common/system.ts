@@ -81,6 +81,18 @@ export class System
         return Number(child_process.execSync(nvidia_smi_temp_command).toString());
     }
 
+    public static checkIfNvidiaCardExists(): boolean
+    {
+        let fs = Environment.getObject("fs");
+
+        if(fs.existsSync("/proc/driver/nvidia/"))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Check if User root
      *

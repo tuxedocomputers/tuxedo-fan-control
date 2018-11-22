@@ -219,7 +219,7 @@ parseCommandLine();
 function createWindow(): void
 {
     mainWindow = new BrowserWindow({
-        height: 340,
+        height: 400,
         width: 880,
         icon: path.join(__dirname, "data", "32x32.png"),
         title: "TUXEDO Fan Control"
