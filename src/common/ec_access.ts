@@ -8,12 +8,36 @@ export enum FAN
     GPUTWODATA = 3
 }
 
+export class FanInforamtion
+{
+    fanId: number;
+    remoteTemp: number;
+    localTemp: number;
+    fanDuty: number;
+    rawFanDuty: number;
+    rpm: number;
+}
+
+export function getFanInformation(fan: number): FanInforamtion
+{
+    const ec_access = Environment.getObject("ec_access");
+    let fanInformations: FanInforamtion = new FanInforamtion();
+    fanInformations.fanId = fan;
+    fanInformations.remoteTemp = ec_access.getRemoteTemp(fan);
+    fanInformations.localTemp = ec_access.getLocalTemp(fan);
+    fanInformations.rawFanDuty = ec_access.getRawFanDutyNew(fan);
+    fanInformations.fanDuty = (fanInformations.rawFanDuty / 255) * 100;
+    fanInformations.rpm = ec_access.getFanRpm(fan);
+
+    return fanInformations;
+}
+
 export function getTempRemote(fan: number): number
 {
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        let temp = ec_access.getRemoteTemp(2);
+        let temp = ec_access.getRemoteTemp(fan);
         return temp;
     }
     catch (error)
@@ -28,7 +52,7 @@ export function getTempLocal(fan: FAN): number
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        return ec_access.GetLocalTemp(fan);
+        return ec_access.getLocalTemp(fan);
     }
     catch (error)
     {

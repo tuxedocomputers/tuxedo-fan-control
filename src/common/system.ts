@@ -214,4 +214,9 @@ export class System
             this.logMessage("Error at restart daemon over systemd. Error: " + error);
         }
     }
+
+    public static Sleep(milliseconds) 
+    {
+        return new Promise(resolve => setTimeout(resolve, milliseconds));
+    }
 }

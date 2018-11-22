@@ -53,6 +53,9 @@
                             <button button type="button" class="btn btn-link" (click)="openLink('https://getbootstrap.com/');">Bootstrap</button>
                         </li>
                         <li>
+                            <button button type="button" class="btn btn-link" (click)="openLink('https://jquery.com/');">jQuery</button>
+                        </li>
+                        <li>
                             <button button type="button" class="btn btn-link" (click)="openLink('https://github.com/nodejs/node-addon-api');">node-addon-api</button>
                         </li>
                         <li>
@@ -97,7 +100,7 @@
                     <div class="entrytitlespan">CPU Temp:</div><span>{{ cpuTemp }}</span>
                 </div>
                 <div class="entrycontainer">
-                    <div class="entrytitlespan">CPU FAN Duty:</div><span>{{ cpuFanDuty }}</span>
+                    <div class="entrytitlespan">CPU FAN Duty (in %):</div><span>{{ cpuFanDuty }}</span>
                 </div>
                 <div class="entrycontainer">
                     <div class="entrytitlespan">CPU FAN RPMs:</div><span>{{ cpuFanRpm }}</span>
@@ -111,13 +114,13 @@
             </div>
             <div class="tab-pane fade" id="gpu" role="tabpanel" aria-labelledby="gpu-tab">
                 <div style="float: left;">
-                    <h2>GPU 1</h2>
+                    <h2>GPU Fan 1</h2>
                 
                     <div class="entrycontainer">
                         <div class="entrytitlespan">GPU Temp:</div><span>{{ gpuOneTemp }}</span>
                     </div>
                     <div class="entrycontainer">
-                        <div class="entrytitlespan">GPU FAN Duty:</div><span>{{ gpuOneFanDuty }}</span>
+                        <div class="entrytitlespan">GPU FAN Duty (in %):</div><span>{{ gpuOneFanDuty }}</span>
                     </div>
                     <div class="entrycontainer">
                         <div class="entrytitlespan">GPU FAN RPMs:</div><span>{{ gpuOneFanRpm }}</span>
@@ -131,13 +134,13 @@
                 </div>
                     
                 <div>
-                    <h2>GPU 2</h2>
+                    <h2>GPU Fan 2</h2>
                 
                     <div class="entrycontainer">
                         <div class="entrytitlespan">GPU Temp:</div><span>{{ gpuTwoTemp }}</span>
                     </div>
                     <div class="entrycontainer">
-                        <div class="entrytitlespan">GPU FAN Duty:</div><span>{{ gpuTwoFanDuty }}</span>
+                        <div class="entrytitlespan">GPU FAN Duty (in %):</div><span>{{ gpuTwoFanDuty }}</span>
                     </div>
                     <div class="entrycontainer">
                         <div class="entrytitlespan">GPU FAN RPMs:</div><span>{{ gpuTwoFanRpm }}</span>

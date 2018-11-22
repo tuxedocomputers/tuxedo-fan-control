@@ -55,7 +55,7 @@ export class AppComponent implements OnInit, OnDestroy
         }
 
         this.expertMode = Environment.getObject("exportMode");
-        
+
         this.nvidaCardExists = System.checkIfNvidiaCardExists();
         System.logMessage("Nvidia Card Exist: " + this.nvidaCardExists);
 
@@ -92,11 +92,11 @@ export class AppComponent implements OnInit, OnDestroy
                 this.gpuInformations = "NO GPU Fan Table exist";
             }
     
-            if(this._fanTable.hasGpu && !System.isNvidiaSmiInstalled())
-            {
-                System.logMessage("AppComponent - ngOnInit - NVIDIA SMI is missing");
-                this.gpuInformations += ", NVIDIA SMI is missing";
-            }
+            // if(this._fanTable.hasGpu && !System.isNvidiaSmiInstalled())
+            // {
+            //     System.logMessage("AppComponent - ngOnInit - NVIDIA SMI is missing");
+            //     this.gpuInformations += ", NVIDIA SMI is missing";
+            // }
         }
         else
         {
@@ -121,12 +121,11 @@ export class AppComponent implements OnInit, OnDestroy
         this.canCpuDutyChange = this.canGpuDutyChange = this.isDaemonRunning;
         this.informations = !this.isDaemonRunning ? "Daemon is active" : "";
 
-        this.cpuTemp = ec_access.getTempRemote(ec_access.FAN.CPUDATA);
-        for(let i = 0; i < 100000; i++) {}
-        this.cpuFanDuty = ec_access.getFanDuty(ec_access.FAN.CPUDATA);
-        for(let i = 0; i < 100000; i++) {}
-        this.cpuFanRpm = ec_access.getRpm(ec_access.FAN.CPUDATA);
-        for(let i = 0; i < 100000; i++) {}
+        let cpuInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.CPUDATA);
+
+        this.cpuTemp = cpuInfos.remoteTemp;
+        this.cpuFanDuty = cpuInfos.fanDuty;
+        this.cpuFanRpm = cpuInfos.rpm;
 
         if(this.cpuTemp >= 70)
         {
@@ -140,16 +139,15 @@ export class AppComponent implements OnInit, OnDestroy
             }
         }
 
+        for(let i = 0; i < 100000; i++) {}
+
         if(this.nvidaCardExists)
         {
-            this.gpuOneTemp = ec_access.getTempRemote(ec_access.FAN.GPUONEDATA);;
-            for(let i = 0; i < 100000; i++) {}
+            let gpuOneInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.GPUONEDATA);
 
-            this.gpuOneFanDuty = ec_access.getFanDuty(ec_access.FAN.GPUONEDATA);
-            for(let i = 0; i < 100000; i++) {}
-
-            this.gpuOneFanRpm = ec_access.getRpm(ec_access.FAN.GPUONEDATA);
-            for(let i = 0; i < 100000; i++) {}
+            this.gpuOneTemp = gpuOneInfos.remoteTemp;
+            this.gpuOneFanDuty = gpuOneInfos.fanDuty;
+            this.gpuOneFanRpm = gpuOneInfos.rpm;
 
             if(this.gpuOneTemp >= 70)
             {
@@ -163,14 +161,13 @@ export class AppComponent implements OnInit, OnDestroy
                 }
             }
 
-            this.gpuTwoTemp = ec_access.getTempRemote(ec_access.FAN.GPUTWODATA);;
             for(let i = 0; i < 100000; i++) {}
 
-            this.gpuTwoFanDuty = ec_access.getFanDuty(ec_access.FAN.GPUTWODATA);
-            for(let i = 0; i < 100000; i++) {}
+            let gpuTwoInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.GPUTWODATA);
 
-            this.gpuTwoFanRpm = ec_access.getRpm(ec_access.FAN.GPUTWODATA);
-            for(let i = 0; i < 100000; i++) {}
+            this.gpuTwoTemp = gpuTwoInfos.remoteTemp;
+            this.gpuTwoFanDuty = gpuTwoInfos.fanDuty;
+            this.gpuTwoFanRpm = gpuTwoInfos.rpm;
 
             if(this.gpuTwoTemp >= 70)
             {
@@ -183,6 +180,8 @@ export class AppComponent implements OnInit, OnDestroy
                     this.informations += ", High GPU 2 Temerature";
                 }
             }
+
+            for(let i = 0; i < 100000; i++) {}
         }
     }
 
