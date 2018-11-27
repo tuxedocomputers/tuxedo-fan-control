@@ -3,26 +3,17 @@
 #include <sys/io.h>
 #include <unistd.h>
 
-// #define EC_SC 0x66
 #define EC_COMMAND_PORT         0x66
-//#define EC_DATA 0x62
 #define EC_DATA_PORT            0x62
 
 #define IBF                     1
 #define OBF                     0
 #define EC_SC_READ_CMD          0x80
 
-#define EC_REG_SIZE             0x100
-
-#define EC_REG_CPU_FAN_DUTY     0xCE
-#define EC_REG_CPU_TEMP         0x07
 #define EC_REG_CPU_FAN_RPMS_HI  0xD0
 #define EC_REG_CPU_FAN_RPMS_LO  0xD1
 #define EC_REG_GPU_FAN_RPMS_HI  0xD2
 #define EC_REG_GPU_FAN_RPMS_LO  0xD3
-#define EC_REG_GPU_TEMP         0xCD
-#define EC_REG_GPU_FAN_DUTY     0xCF
-#define EC_REG_TEMP             0x9E
 
 #define TEMP                    0x9E
 
@@ -106,7 +97,7 @@ static int ReadByte(void)
 static int SendCommand(int command)
 {
     int tt = 0;
-    while((inb(EC_COMMAND_PORT) & 2))    /* check if IBE full */
+    while((inb(EC_COMMAND_PORT) & 2))
     {
         tt++;
         if(tt>30000)
@@ -120,7 +111,7 @@ static int SendCommand(int command)
 
 static int WriteData(int data)
 {
-    while((inb(EC_COMMAND_PORT) & 2));   /* check if IBE full */
+    while((inb(EC_COMMAND_PORT) & 2));
 
     outb(data, EC_DATA_PORT);
     return 0;
@@ -157,16 +148,12 @@ static int RawFanDuty(int index)
     EcInit();
     EcFlush();
 
-    SendCommand(0x9E);
+    SendCommand(TEMP);
     WriteData(index);
 
-    // ReadByte();
-    // ReadByte();
-    // int value = ReadByte();
-
-    EcIoRead(0x9E);
-    EcIoRead(0x9E);
-    int value = EcIoRead(0x9E);
+    ReadByte();
+    ReadByte();
+    int value = ReadByte();
 
     return value;
 }
@@ -243,12 +230,6 @@ Napi::Number GetFanRpm(const Napi::CallbackInfo& info)
     {
         EcInit();
         EcFlush();
-
-        // SendCommand(EC_REG_CPU_FAN_RPMS_HI);
-        // int raw_rpm_hi = ReadByte();
-
-        // SendCommand(EC_REG_CPU_FAN_RPMS_LO);
-        // int raw_rpm_lo = ReadByte();
 
         int raw_rpm_hi = EcIoRead(EC_REG_CPU_FAN_RPMS_HI);
         int raw_rpm_lo = EcIoRead(EC_REG_CPU_FAN_RPMS_LO);
@@ -360,19 +341,15 @@ void SetAutoFanDuty(const Napi::CallbackInfo& info)
     switch (index)
 	{
         case 1:
-            // 1 -> cpu
             WriteData(0x01);
             break;
         case 2:
-            // 2 -> vga
             WriteData(0x02);
             break;
         case 3:
-            // 2 -> vga
             WriteData(0x03);
             break;
         case 5:
-            // 5 -> all
             WriteData(0xff);
             WriteData(0xff);
             break;
