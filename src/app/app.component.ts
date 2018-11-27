@@ -180,60 +180,47 @@ export class AppComponent implements OnInit, OnDestroy
         }
     }
 
-    public setCpuFanDuty(valueString: string): void
+    public setFanDuty(fan: number, valueString: string): void
     {
-        System.logMessage("AppComponent - setCpuFanDuty - start");
+        System.logMessage("AppComponent - setFanDuty - start");
 
-        System.logMessage("AppComponent - setCpuFanDuty - parse value");
+        System.logMessage("AppComponent - setFanDuty - parse value");
         let value: number = Number.parseInt(valueString);
 
-        System.logMessage("AppComponent - setCpuFanDuty - set cpu fan duty on: " + value);
-        if(value < 1 || value > 100)
+        System.logMessage("AppComponent - setFanDuty - set for value fan (" + fan.toString() + ") duty on: " + value);
+        if(value < 1 || value > 255)
         {
-            System.logMessage("AppComponent - setCpuFanDuty - Invalid CPU Duty Speed! Possible values are between 1 and 100");
-            this.informations = "Invalid CPU Duty Speed! Possible values are between 1 and 100";
+            System.logMessage("AppComponent - setFanDuty - Invalid Duty Speed! Possible values are between 1 and 255");
+            this.informations = "Invalid Duty Speed! Possible values are between 1 and 255";
             return;
         }
 
         try
         {
-            System.logMessage("AppComponent - setCpuFanDuty - set cpu fan duty");
-            let result = ec_access.setCpuFanDuty(value);
-            System.logMessage("AppComponent - setCpuFanDuty - result: " + result);
+            System.logMessage("AppComponent - setFanDuty - set fan duty");
+            let result = ec_access.setFanDuty(fan, value);
+            System.logMessage("AppComponent - setFanDuty - result: " + result);
         }
         catch (error)
         {
-            System.logMessage("AppComponent - setCpuFanDuty - Error at setting CPU Fan Duty. " + error);
-            this.informations = "Error at setting CPU Fan Duty. " + error;
+            System.logMessage("AppComponent - setFanDuty - Error at setting Fan Duty. " + error);
+            this.informations = "Error at setting Fan Duty. " + error;
         }
     }
 
-    public setGpuFanDuty(valueString: string): void
+    public setAutoFanDuty(fan: number): void
     {
-        System.logMessage("AppComponent - setGpuFanDuty - start");
-
-        System.logMessage("AppComponent - setGpuFanDuty - parse value");
-        let value: number = Number.parseInt(valueString);
-
-        System.logMessage("AppComponent - setGpuFanDuty - set gpu fan duty on: " + value);
-
-        if(value < 1 || value > 100)
-        {
-            System.logMessage("AppComponent - setGpuFanDuty - Invalid GPU Duty Speed! Possible values are between 1 and 100");
-            this.informations = "Invalid GPU Duty Speed! Possible values are between 1 and 100";
-            return;
-        }
+        System.logMessage("AppComponent - setAutoFanDuty - start");
 
         try
         {
-            System.logMessage("AppComponent - setGpuFanDuty - set cpu fan duty");
-            let result = ec_access.setGpuFanDuty(value);
-            System.logMessage("AppComponent - setGpuFanDuty - result: " + result);
+            System.logMessage("AppComponent - setAutoFanDuty - set fan duty");
+            ec_access.setAutoFanDuty(fan);
         }
         catch (error)
         {
-            System.logMessage("AppComponent - setGpuFanDuty - Error at setting GPU Fan Duty. " + error);
-            this.informations = "Error at setting GPU Fan Duty. " + error;
+            System.logMessage("AppComponent - setAutoFanDuty - Error at setting Fan Duty. " + error);
+            this.informations = "Error at setting Auto Fan Duty. " + error;
         }
     }
 

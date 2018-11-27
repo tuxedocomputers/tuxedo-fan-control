@@ -109,7 +109,11 @@
                 <div class="entrycontainer" [hidden]="!expertMode">
                     <div class="entrytitlespan">Set CPU Fan Duty:</div>
                     <input #cpuDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
-                    <button (click)="setCpuFanDuty(cpuDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canCpuDutyChange">Set CPU Fan Duty</button>
+                    <button (click)="setFanDuty(1, cpuDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canCpuDutyChange">Set CPU Fan Duty</button>
+                </div>
+
+                <div [hidden]="!expertMode">
+                    <button (click)="setAutoFanDuty(1)" [disabled]="!isUserRoot || !canCpuDutyChange">Set Auto Duty for CPU Fan</button>
                 </div>
             </div>
             <div class="tab-pane fade" id="gpu" role="tabpanel" aria-labelledby="gpu-tab">
@@ -128,8 +132,12 @@
                 
                     <div class="entrycontainer" [hidden]="!expertMode">
                         <div class="entrytitlespan">Set GPU Fan Duty:</div>
-                        <input #gpuDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
-                        <button (click)="setGpuFanDuty(gpuDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canGpuDutyChange">Set GPU Fan Duty</button>
+                        <input #gpuOneDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
+                        <button (click)="setFanDuty(2, gpuOneDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canGpuDutyChange">Set GPU Fan Duty</button>
+                    </div>
+
+                    <div [hidden]="!expertMode">
+                        <button (click)="setAutoFanDuty(2)" [disabled]="!isUserRoot || !canGpuDutyChange">Set Auto Duty for GPU Fan ONE</button>
                     </div>
                 </div>
                     
@@ -148,8 +156,12 @@
                 
                     <div class="entrycontainer" [hidden]="!expertMode">
                         <div class="entrytitlespan">Set GPU Fan Duty:</div>
-                        <input #gpuDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
-                        <button (click)="setGpuFanDuty(gpuDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canGpuDutyChange">Set GPU Fan Duty</button>
+                        <input #gpuTwoDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
+                        <button (click)="setFanDuty(3, gpuTwoDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canGpuDutyChange">Set GPU Fan Duty</button>
+                    </div>
+
+                    <div [hidden]="!expertMode">
+                        <button (click)="setAutoFanDuty(3)" [disabled]="!isUserRoot || !canGpuDutyChange">Set Auto Duty for GPU Fan Two</button>
                     </div>
                 </div>
             </div>

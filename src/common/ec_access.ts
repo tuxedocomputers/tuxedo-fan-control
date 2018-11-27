@@ -22,24 +22,24 @@ export function getFanInformation(fan: number): FanInforamtion
 {
     const ec_access = Environment.getObject("ec_access");
     let fanInformations: FanInforamtion = new FanInforamtion();
-    let fd: number = ec_access.getRawFanDutyNew(fan);
+    let fd: number = ec_access.nGetRawFanDuty(fan);
 
     fanInformations.fanId = fan;
     fanInformations.rawFanDuty = fd;
     fanInformations.fanDuty = (fd / 255) * 100;
-    fanInformations.remoteTemp = ec_access.getRemoteTemp(fan);
-    fanInformations.localTemp = ec_access.getLocalTemp(fan);
-    fanInformations.rpm = ec_access.getFanRpm(fan);
+    fanInformations.remoteTemp = ec_access.nGetRemoteTemp(fan);
+    fanInformations.localTemp = ec_access.nGetLocalTemp(fan);
+    fanInformations.rpm = ec_access.nGetFanRpm(fan);
 
     return fanInformations;
 }
 
-export function getTempRemote(fan: number): number
+export function getRemoteTemp(fan: number): number
 {
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        let temp = ec_access.getRemoteTemp(fan);
+        let temp = ec_access.nGetRemoteTemp(fan);
         return temp;
     }
     catch (error)
@@ -49,12 +49,12 @@ export function getTempRemote(fan: number): number
     }
 }
 
-export function getTempLocal(fan: FAN): number
+export function getLocalTemp(fan: FAN): number
 {
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        return ec_access.getLocalTemp(fan);
+        return ec_access.nGetLocalTemp(fan);
     }
     catch (error)
     {
@@ -69,7 +69,7 @@ export function getFanDuty(fan: FAN): number
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        return ((ec_access.getRawFanDutyNew(fan) / 255) * 100);
+        return ((ec_access.nGetFanDuty(fan) / 255) * 100);
     }
     catch (error)
     {
@@ -78,13 +78,12 @@ export function getFanDuty(fan: FAN): number
     }
 }
 
-export function getRpm(fan: FAN): number
+export function getFanRpm(fan: FAN): number
 {
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        //return ec_access.getFanDutyNew(fan);
-        return ec_access.getFanRpm(fan);
+        return ec_access.nGetFanRpm(fan);
     }
     catch (error)
     {
@@ -99,7 +98,7 @@ export function getRawFanDuty(fan: FAN): number
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        return ec_access.getRawFanDutyNew(fan);
+        return ec_access.nGetRawFanDuty(fan);
     }
     catch (error)
     {
@@ -109,49 +108,46 @@ export function getRawFanDuty(fan: FAN): number
 }
 
 /**
- * Set the CPU Fan Duty
+ * Set the Fan Duty
  *
- * @param value CPU Fan Duty Value in percent
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * @param value GPU Fan Duty Value in percent
  *
  * @returns A boolean, thats indication if the operation successful (true) or not (false)
  */
-export function setCpuFanDuty(value: number): boolean
+export function setFanDuty(fan: number, value: number): boolean
 {
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        let result = ec_access.setCpuFanDuty(value);
+        let result = ec_access.nSetFanDuty(fan, value);
 
         return result;
     }
     catch (error)
     {
-        console.log("setCpuFanDuty Error: " + error);
+        console.log("setFanDuty Error: " + error);
+        Environment.getObject("log")("setFanDuty error: " + error);
+
         return false;
     }
 }
 
 /**
- * Set the GPU Fan Duty
+ * Set the Fan Duty on Auto mode
  *
- * @param value GPU Fan Duty Value in percent
- *
- * @returns A boolean, thats indication if the operation successful (true) or not (false)
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
  */
-export function setGpuFanDuty(value: number): boolean
+export function setAutoFanDuty(fan: number): void
 {
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        let result = ec_access.setGpuFanDuty(value);
-
-        return result;
+        ec_access.nSetAutoFanDuty(fan);
     }
     catch (error)
     {
-        console.log("setGpuFanDuty Error: " + error);
-        Environment.getObject("log")("setGpuFanDuty error: " + error);
-
-        return false;
+        console.log("setAutoFanDuty Error: " + error);
+        Environment.getObject("log")("setFanDuty error: " + error);
     }
 }

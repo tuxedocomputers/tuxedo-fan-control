@@ -11,11 +11,8 @@ export class FanTable
     cpuMaxTemp: number;
     gpuMinTemp: number;
     gpuMaxTemp: number;
-    gpuTwoMinTemp?: number;
-    gpuTwoMaxTemp?: number;
     cpuTable: TemperaturEntry[];
     gpuTable: TemperaturEntry[];
-    gpuTwoTable?: TemperaturEntry[];
 }
 
 export class TemperaturEntry

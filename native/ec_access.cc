@@ -383,14 +383,14 @@ void SetAutoFanDuty(const Napi::CallbackInfo& info)
 
 Napi::Object init(Napi::Env env, Napi::Object exports)
 {
-    exports.Set(Napi::String::New(env, "getFanDutyNew"), Napi::Function::New(env, GetFanDutyNew));
-    exports.Set(Napi::String::New(env, "getRawFanDutyNew"), Napi::Function::New(env, GetRawFanDutyNew));
-    exports.Set(Napi::String::New(env, "getLocalTemp"), Napi::Function::New(env, GetLocalTemp));
-    exports.Set(Napi::String::New(env, "getRemoteTemp"), Napi::Function::New(env, GetRemoteTemp));
-    exports.Set(Napi::String::New(env, "getFanRpm"), Napi::Function::New(env, GetFanRpm));
+    exports.Set(Napi::String::New(env, "nGetFanDuty"), Napi::Function::New(env, GetFanDutyNew));
+    exports.Set(Napi::String::New(env, "nGetRawFanDuty"), Napi::Function::New(env, GetRawFanDutyNew));
+    exports.Set(Napi::String::New(env, "nGetLocalTemp"), Napi::Function::New(env, GetLocalTemp));
+    exports.Set(Napi::String::New(env, "nGetRemoteTemp"), Napi::Function::New(env, GetRemoteTemp));
+    exports.Set(Napi::String::New(env, "nGetFanRpm"), Napi::Function::New(env, GetFanRpm));
 
-    exports.Set(Napi::String::New(env, "setFanDuty"), Napi::Function::New(env, SetFanDuty));
-    exports.Set(Napi::String::New(env, "setAutoFanDuty"), Napi::Function::New(env, SetAutoFanDuty));
+    exports.Set(Napi::String::New(env, "nSetFanDuty"), Napi::Function::New(env, SetFanDuty));
+    exports.Set(Napi::String::New(env, "nSetAutoFanDuty"), Napi::Function::New(env, SetAutoFanDuty));
 
     return exports;
 };
