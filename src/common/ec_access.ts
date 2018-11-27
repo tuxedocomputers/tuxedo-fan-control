@@ -22,11 +22,13 @@ export function getFanInformation(fan: number): FanInforamtion
 {
     const ec_access = Environment.getObject("ec_access");
     let fanInformations: FanInforamtion = new FanInforamtion();
+    let fd: number = ec_access.getRawFanDutyNew(fan);
+
     fanInformations.fanId = fan;
+    fanInformations.rawFanDuty = fd;
+    fanInformations.fanDuty = (fd / 255) * 100;
     fanInformations.remoteTemp = ec_access.getRemoteTemp(fan);
     fanInformations.localTemp = ec_access.getLocalTemp(fan);
-    fanInformations.rawFanDuty = ec_access.getRawFanDutyNew(fan);
-    fanInformations.fanDuty = (fanInformations.rawFanDuty / 255) * 100;
     fanInformations.rpm = ec_access.getFanRpm(fan);
 
     return fanInformations;

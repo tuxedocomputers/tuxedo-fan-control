@@ -41,6 +41,20 @@ let publicOptions: Array<CommandlineOption> = [
         }
     },
     {
+        option: "-s",
+        optionLong: "--show",
+        description: "Get the Current Fan Informations",
+        action: (arg, index, array) => {
+            let environment = require("./common/environment").Environment;
+            environment.setDaemonMode(false);
+            environment.setEnvironmentVariable("child_process", require("child_process"), "electron");
+            environment.setEnvironmentVariable("fs", require("fs"), "electron");
+            environment.setEnvironmentVariable("ec_access", require("./modules/ec_access.node"), "electron");
+            printCurrentFanInformations();
+            process.exit();
+        }
+    },
+    {
         option: null,
         optionLong: "--startdaemon",
         description: "Start TUXEDO Control Center Daemon",
@@ -301,6 +315,34 @@ function printdaemonstatus(): void
     let daemon = require("./common/daemon");
     console.log("Is Running: " + daemon.isDaemonRunning());
     console.log("Daemon PID: " + daemon.getDaemonPid());
+}
+
+function printCurrentFanInformations(): void
+{
+    let ec_access = require("./common/ec_access");
+    let system = require("./common/system").System;
+    let cpuInfos = ec_access.getFanInformation(ec_access.FAN.CPUDATA);
+    let gpuOneInfon = null;
+    let gpuTwoInfon = null;
+
+    console.log(cpuInfos);
+
+    if(system.checkIfNvidiaCardExists())
+    {
+        console.log("Nvidia Card exist");
+        gpuOneInfon = ec_access.getFanInformation(ec_access.FAN.GPUONEDATA);
+        
+        for(let i = 0; i < 100000; i++) {}
+
+        gpuTwoInfon = ec_access.getFanInformation(ec_access.FAN.GPUTWODATA);
+
+        console.log(gpuOneInfon);
+        console.log(gpuTwoInfon);
+    }
+    else
+    {
+        console.log("Nvidia Card does not exist");
+    }
 }
 
 class CommandlineOption

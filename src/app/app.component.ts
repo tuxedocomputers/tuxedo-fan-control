@@ -91,12 +91,6 @@ export class AppComponent implements OnInit, OnDestroy
                 System.logMessage("AppComponent - ngOnInit - NO GPU Fan Table exist");
                 this.gpuInformations = "NO GPU Fan Table exist";
             }
-    
-            // if(this._fanTable.hasGpu && !System.isNvidiaSmiInstalled())
-            // {
-            //     System.logMessage("AppComponent - ngOnInit - NVIDIA SMI is missing");
-            //     this.gpuInformations += ", NVIDIA SMI is missing";
-            // }
         }
         else
         {
@@ -110,8 +104,9 @@ export class AppComponent implements OnInit, OnDestroy
         this._updateValuesWorker.unsubscribe();
     }
 
-    private setValues(): void
+    private async setValues()
     {
+        console.log("begin setValues");
         this.informations = "";
         this.isDaemonRunning = !(<any>window).require("../common/daemon").isDaemonRunning();
 
@@ -124,7 +119,7 @@ export class AppComponent implements OnInit, OnDestroy
         let cpuInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.CPUDATA);
 
         this.cpuTemp = cpuInfos.remoteTemp;
-        this.cpuFanDuty = cpuInfos.fanDuty;
+        this.cpuFanDuty = Math.round(cpuInfos.fanDuty);
         this.cpuFanRpm = cpuInfos.rpm;
 
         if(this.cpuTemp >= 70)
@@ -139,14 +134,14 @@ export class AppComponent implements OnInit, OnDestroy
             }
         }
 
-        for(let i = 0; i < 100000; i++) {}
+        await System.Sleep(100);
 
         if(this.nvidaCardExists)
         {
             let gpuOneInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.GPUONEDATA);
 
-            this.gpuOneTemp = gpuOneInfos.remoteTemp;
-            this.gpuOneFanDuty = gpuOneInfos.fanDuty;
+            this.gpuOneTemp = gpuOneInfos.localTemp;
+            this.gpuOneFanDuty = Math.round(gpuOneInfos.fanDuty);
             this.gpuOneFanRpm = gpuOneInfos.rpm;
 
             if(this.gpuOneTemp >= 70)
@@ -161,12 +156,12 @@ export class AppComponent implements OnInit, OnDestroy
                 }
             }
 
-            for(let i = 0; i < 100000; i++) {}
+            await System.Sleep(100);
 
             let gpuTwoInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.GPUTWODATA);
 
-            this.gpuTwoTemp = gpuTwoInfos.remoteTemp;
-            this.gpuTwoFanDuty = gpuTwoInfos.fanDuty;
+            this.gpuTwoTemp = gpuTwoInfos.localTemp;
+            this.gpuTwoFanDuty = Math.round(gpuTwoInfos.fanDuty);
             this.gpuTwoFanRpm = gpuTwoInfos.rpm;
 
             if(this.gpuTwoTemp >= 70)
@@ -181,7 +176,7 @@ export class AppComponent implements OnInit, OnDestroy
                 }
             }
 
-            for(let i = 0; i < 100000; i++) {}
+            await System.Sleep(100);
         }
     }
 

@@ -160,9 +160,13 @@ static int RawFanDuty(int index)
     SendCommand(0x9E);
     WriteData(index);
 
-    ReadByte();
-    ReadByte();
-    int value = ReadByte();
+    // ReadByte();
+    // ReadByte();
+    // int value = ReadByte();
+
+    EcIoRead(0x9E);
+    EcIoRead(0x9E);
+    int value = EcIoRead(0x9E);
 
     return value;
 }
@@ -239,6 +243,13 @@ Napi::Number GetFanRpm(const Napi::CallbackInfo& info)
     {
         EcInit();
         EcFlush();
+
+        // SendCommand(EC_REG_CPU_FAN_RPMS_HI);
+        // int raw_rpm_hi = ReadByte();
+
+        // SendCommand(EC_REG_CPU_FAN_RPMS_LO);
+        // int raw_rpm_lo = ReadByte();
+
         int raw_rpm_hi = EcIoRead(EC_REG_CPU_FAN_RPMS_HI);
         int raw_rpm_lo = EcIoRead(EC_REG_CPU_FAN_RPMS_LO);
 
