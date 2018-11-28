@@ -76,7 +76,7 @@ static void EcFlush()
     }
 }
 
-static int ReadByte(void)
+static int ReadByte()
 {
     int i = 1000000;
     while ((inb(EC_COMMAND_PORT) & 1) == 0 && i > 0)
@@ -105,7 +105,9 @@ static int SendCommand(int command)
             break;
         }
     }
+
     outb(command, EC_COMMAND_PORT);
+    
     return EXIT_SUCCESS;
 }
 
@@ -336,10 +338,10 @@ void SetAutoFanDuty(const Napi::CallbackInfo& info)
     EcInit();
 
     SendCommand(0x99);
-	WriteData(0xff);
+    WriteData(0xff);
 
     switch (index)
-	{
+    {
         case 1:
             WriteData(0x01);
             break;
@@ -355,7 +357,7 @@ void SetAutoFanDuty(const Napi::CallbackInfo& info)
             break;
         default:
             break;
-	}
+    }
 }
 
 Napi::Object init(Napi::Env env, Napi::Object exports)
