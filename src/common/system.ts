@@ -45,7 +45,7 @@ export class System
         fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "getDmiModelName\n", { flag: "a" });
         try
         {
-            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "isRunningAsElectronApp\n", { flag: "a" });
+            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "read string and trim\n", { flag: "a" });
             return fs.readFileSync("/sys/class/dmi/id/board_name").toString().trim();
         }
         catch (error)
@@ -54,6 +54,39 @@ export class System
         }
 
         return "";
+    }
+
+    /**
+     * Reading the DMI and returns the DMI Model Vendor
+     *
+     * @returns The DMI Model Vendor of the device
+     */
+    public static getDmiModelVendor(): string
+    {
+        let fs: any = Environment.getObject("fs");
+
+        fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "getDmiModelVendor\n", { flag: "a" });
+        try
+        {
+            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "read string and trim\n", { flag: "a" });
+            return fs.readFileSync("/sys/class/dmi/id/board_vendor").toString().trim();
+        }
+        catch (error)
+        {
+            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "error: " + error.toString() + "\n", { flag: "a" });
+        }
+
+        return "";
+    }
+
+    public static isTuxedoDevice(): boolean
+    {
+        if(this.getDmiModelVendor().toLocaleLowerCase() === "tuxedo")
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /**

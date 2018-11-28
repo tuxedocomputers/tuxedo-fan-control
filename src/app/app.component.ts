@@ -4,6 +4,8 @@ import { System } from "../common/system";
 import { Observable, timer } from 'rxjs'
 import { readFanTables, FanTable } from '../common/fanTable';
 import { Environment } from '../common/environment';
+import * as $ from 'jquery';
+import "bootstrap";
 
 @Component({
     selector: 'app-root',
@@ -51,6 +53,13 @@ export class AppComponent implements OnInit, OnDestroy
         {
             this.informations = "User is not root, please restart with root privileges";
             this.canInteractWithUnitFile = this.canCreateUnitFile = this.isUserRoot = false;
+            return;
+        }
+
+        if(Environment.getObject("vendorcheck") && !System.isTuxedoDevice())
+        {
+            $("#notuxedomodal").modal("toggle");
+            this.informations = "No TUXEDO device";
             return;
         }
 
@@ -257,5 +266,10 @@ export class AppComponent implements OnInit, OnDestroy
     {
         System.logMessage("AppComponent - restartDaemon");
         System.restartDaemon();
+    }
+
+    public closeApplication(): void
+    {
+        (<any>window).require("electron").remote.getCurrentWindow().close();
     }
 }
