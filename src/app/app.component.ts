@@ -54,7 +54,7 @@ export class AppComponent implements OnInit, OnDestroy
             return;
         }
 
-        this.expertMode = Environment.getObject("exportMode");
+        this.expertMode = Environment.getObject("expertMode");
 
         this.nvidaCardExists = System.checkIfNvidiaCardExists();
         System.logMessage("Nvidia Card Exist: " + this.nvidaCardExists);

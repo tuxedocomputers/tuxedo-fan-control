@@ -20,6 +20,8 @@ if(!fs.existsSync(path.dirname(logFilePath)))
 
 require("./common/environment").Environment.setEnvironmentVariable("isUserRoot", isUserRoot, "all");
 require("./common/environment").Environment.setEnvironmentVariable("appPath", process.execPath, "all");
+require("./common/environment").Environment.setEnvironmentVariable("vendorcheck", true, "all");
+(<any>global).vendorcheck = true;
 
 let publicOptions: Array<CommandlineOption> = [
     {
@@ -222,7 +224,15 @@ let privateOptions: Array<CommandlineOption> = [
         optionLong: "--expert",
         description: "",
         action: (arg, index, array) => { 
-            (<any>global).exportMode = true;
+            (<any>global).expertMode = true;
+         }
+    },
+    {
+        option: null,
+        optionLong: "--novendorcheck",
+        description: "",
+        action: (arg, index, array) => { 
+            (<any>global).vendorcheck = false;
          }
     }
 ];

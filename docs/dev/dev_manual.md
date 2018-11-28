@@ -5,6 +5,7 @@
     - [--debugfan](#debugfan)
     - [--daemon](#daemon)
     - [--expert](#expert)
+    - [--novendorcheck](#novendorcheck)
 - [Paths and Names](#paths-and-names)
 - [Known Issues](#known-issues)
 
@@ -26,6 +27,9 @@ With this Parameter starts the TUXEDO Fan Control in the Daemon Mode.
 
 ## --expert
 With this Parameter can set custom fan duty in UI.
+
+## --novendorcheck
+Disable the Vendor Check. Use at your own risk for non TUXEDO devices.
 
 # Paths and Names
 
