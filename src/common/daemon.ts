@@ -3,6 +3,7 @@ import * as process from "process";
 import * as child_process from "child_process";
 import * as fs from "fs";
 import { System } from "./system";
+import { setAutoFanDuty } from "./ec_access";
 
 /**
  * Starts the Daemon
@@ -65,11 +66,13 @@ export function stop(): void
     if(fs.existsSync(System.PID_FILE_PATH))
     {
         let daemonPid: number = Number(fs.readFileSync(System.PID_FILE_PATH).toString());
+        let stopSuccess: boolean = false;
 
         try
         {
             process.kill(daemonPid, "SIGINT");
             fs.unlinkSync(System.XLOCK_FILE);
+            stopSuccess = true;
         }
         catch (error)
         {
@@ -77,6 +80,11 @@ export function stop(): void
         }
 
         fs.unlinkSync(System.PID_FILE_PATH);
+
+        if(stopSuccess)
+        {
+            setAutoFanDuty(5);
+        }
     }
 }
 

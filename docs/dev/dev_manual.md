@@ -8,6 +8,7 @@
     - [--novendorcheck](#novendorcheck)
 - [Paths and Names](#paths-and-names)
 - [Known Issues](#known-issues)
+    - [Fan RPMs](#fan-rpms)
 
 <!-- /TOC -->
 
@@ -44,4 +45,5 @@ Disable the Vendor Check. Use at your own risk for non TUXEDO devices.
 | Bin Symlink           | /usr/bin/tuxedofancontrol                     |
 
 # Known Issues
-
+## Fan RPMs
+Currently dont work correctly the Fan RPMs Information, therefore we disable this.
