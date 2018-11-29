@@ -51,7 +51,6 @@ process.argv.forEach(function (parameter, index, array) {
     }
 });
 
-
 for(let file of copyFiles)
 {
     console.log("file: " + file.file);

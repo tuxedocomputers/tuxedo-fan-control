@@ -21,15 +21,15 @@ export class AppComponent implements OnInit, OnDestroy
 
     public cpuTemp: number = 0;
     public cpuFanDuty: number = 0;
-    public cpuFanRpm: number = 0;
+    // public cpuFanRpm: number = 0;
 
     public gpuOneTemp: number = 0;
     public gpuOneFanDuty: number = 0;
-    public gpuOneFanRpm: number = 0;
+    // public gpuOneFanRpm: number = 0;
 
     public gpuTwoTemp: number = 0;
     public gpuTwoFanDuty: number = 0;
-    public gpuTwoFanRpm: number = 0;
+    // public gpuTwoFanRpm: number = 0;
 
     public canCpuDutyChange: boolean = true;
     public canGpuDutyChange: boolean = true;
@@ -129,7 +129,7 @@ export class AppComponent implements OnInit, OnDestroy
 
         this.cpuTemp = cpuInfos.remoteTemp;
         this.cpuFanDuty = Math.round(cpuInfos.fanDuty);
-        this.cpuFanRpm = cpuInfos.rpm;
+        // this.cpuFanRpm = cpuInfos.rpm;
 
         if(this.cpuTemp >= 70)
         {
@@ -151,7 +151,7 @@ export class AppComponent implements OnInit, OnDestroy
 
             this.gpuOneTemp = gpuOneInfos.localTemp;
             this.gpuOneFanDuty = Math.round(gpuOneInfos.fanDuty);
-            this.gpuOneFanRpm = gpuOneInfos.rpm;
+            // this.gpuOneFanRpm = gpuOneInfos.rpm;
 
             if(this.gpuOneTemp >= 70)
             {
@@ -171,7 +171,7 @@ export class AppComponent implements OnInit, OnDestroy
 
             this.gpuTwoTemp = gpuTwoInfos.localTemp;
             this.gpuTwoFanDuty = Math.round(gpuTwoInfos.fanDuty);
-            this.gpuTwoFanRpm = gpuTwoInfos.rpm;
+            // this.gpuTwoFanRpm = gpuTwoInfos.rpm;
 
             if(this.gpuTwoTemp >= 70)
             {

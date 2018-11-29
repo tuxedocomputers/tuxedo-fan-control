@@ -29,7 +29,7 @@ export function getFanInformation(fan: number): FanInforamtion
     fanInformations.fanDuty = (fd / 255) * 100;
     fanInformations.remoteTemp = ec_access.nGetRemoteTemp(fan);
     fanInformations.localTemp = ec_access.nGetLocalTemp(fan);
-    fanInformations.rpm = ec_access.nGetFanRpm(fan);
+    //fanInformations.rpm = ec_access.nGetFanRpm(fan);
 
     return fanInformations;
 }
