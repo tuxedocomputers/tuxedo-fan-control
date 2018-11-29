@@ -7,6 +7,7 @@ import { getFilesRecursiv } from "./helper";
 const srcDir = path.join(__dirname, "..", "src");
 const outputDir = path.join(__dirname, "..", "output", "dist");
 let typescriptFilesToCompile: string[] = [];
+let reportDiagnostic: boolean = false;
 
 const folderToCheck = [
     {
@@ -43,6 +44,13 @@ const copyFiles = [
 ]
 
 console.log("Build parameter: " + process.argv);
+process.argv.forEach(function (parameter, index, array) {
+    if(parameter == "--rd")
+    {
+        reportDiagnostic = true;
+    }
+});
+
 
 for(let file of copyFiles)
 {
@@ -106,7 +114,10 @@ for(let folder of folderToCheck)
             let program = ts.createProgram([file_destination], <any>ts_config);
             let emitResult = program.emit();
 
-            reportDiagnostics(ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics));
+            if(reportDiagnostic)
+            {
+                reportDiagnostics(ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics));
+            }
 
             fs.unlinkSync(file_destination);
         }
@@ -116,7 +127,7 @@ for(let folder of folderToCheck)
 function reportDiagnostics(diagnostics: ts.Diagnostic[]): void
 {
     diagnostics.forEach(diagnostic => {
-        let message = "Error";
+        let message = "Diagnostic Result:";
         if (diagnostic.file)
         {
             let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
