@@ -68,6 +68,8 @@ let publicOptions: Array<CommandlineOption> = [
             }
             else
             {
+                require("./common/environment").Environment.setEnvironmentVariable("fs", require("fs"), "all");
+
                 tuxedoCheckerAndExecuter(() => {
                     require("./common/daemon").start();
                 });
@@ -87,6 +89,8 @@ let publicOptions: Array<CommandlineOption> = [
             }
             else
             {
+                require("./common/environment").Environment.setEnvironmentVariable("fs", require("fs"), "all");
+
                 tuxedoCheckerAndExecuter(() => {
                     require("./common/daemon").stop();
                 });
@@ -106,6 +110,8 @@ let publicOptions: Array<CommandlineOption> = [
             }
             else
             {
+                require("./common/environment").Environment.setEnvironmentVariable("fs", require("fs"), "all");
+
                 tuxedoCheckerAndExecuter(() => {
                     require("./common/daemon").restart();
                 });
@@ -119,6 +125,8 @@ let publicOptions: Array<CommandlineOption> = [
         optionLong: "--statusdaemon",
         description: "Get the status of TUXEDO Control Center Daemon",
         action: (arg, index, array) => {
+            require("./common/environment").Environment.setEnvironmentVariable("fs", require("fs"), "all");
+
             tuxedoCheckerAndExecuter(printdaemonstatus);
             process.exit();
         }
@@ -134,13 +142,13 @@ let publicOptions: Array<CommandlineOption> = [
             }
             else
             {
+                let environment = require("./common/environment").Environment;
+                environment.setEnvironmentVariable("fs", require("fs"), "electron");
+                environment.setEnvironmentVariable("path", require("path"), "electron");
+
                 tuxedoCheckerAndExecuter(() => {
                     try
-                    {
-                        let environment = require("./common/environment").Environment;
-                        environment.setEnvironmentVariable("fs", require("fs"), "electron");
-                        environment.setEnvironmentVariable("path", require("path"), "electron");
-    
+                    {    
                         require("./common/system").System.createUnitFile();
                     }
                     catch(error)
@@ -165,13 +173,13 @@ let publicOptions: Array<CommandlineOption> = [
             }
             else
             {
+                let environment = require("./common/environment").Environment;
+                environment.setEnvironmentVariable("fs", require("fs"), "electron");
+                environment.setEnvironmentVariable("path", require("path"), "electron");
+
                 tuxedoCheckerAndExecuter(() => {
                     try
                     {
-                        let environment = require("./common/environment").Environment;
-                        environment.setEnvironmentVariable("fs", require("fs"), "electron");
-                        environment.setEnvironmentVariable("path", require("path"), "electron");
-
                         require("./common/system").System.removeUnitFile();
                     }
                     catch(error)
@@ -204,15 +212,15 @@ let privateOptions: Array<CommandlineOption> = [
                 console.log("User is not root, abort.");
                 process.exit(1);
             }
+            let environment = require("./common/environment").Environment;
+            environment.setDaemonMode(true);
+            environment.setEnvironmentVariable("fs", require("fs"), "daemon");
+
             tuxedoCheckerAndExecuter(() => { 
                 try
                 {
                     fs.writeFileSync(logFilePath, "Configure daemon", { flag: "a" });
-
-                    let environment = require("./common/environment").Environment;
-                    environment.setDaemonMode(true);
-
-                    environment.setEnvironmentVariable("fs", require("fs"), "daemon");
+                    
                     environment.setEnvironmentVariable("os", require("os"), "daemon");
                     environment.setEnvironmentVariable("path", require("path"), "daemon");
                     environment.setEnvironmentVariable("child_process", require("child_process"), "daemon");
