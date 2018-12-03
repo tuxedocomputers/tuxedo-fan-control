@@ -17,10 +17,13 @@
 
 #define TEMP                    0x9E
 
-// ioperm - set port input/output permissions
-//
-// On success, zero is returned.  On error, -1 is returned, and errno is
-// set appropriately.
+/** 
+ * Set IO port input/output permissions
+ * On success, zero is returned. On error, -1 is returned, and errno is
+ * set appropriately.
+ * 
+ * @return Status of Operation
+*/
 static int EcInit()
 {
     if (ioperm(EC_DATA_PORT, 1, 1) != 0)
@@ -36,6 +39,15 @@ static int EcInit()
     return EXIT_SUCCESS;
 }
 
+/**
+ * Wait on EC
+ * 
+ * @param port The port for waiting
+ * @param flag 
+ * @param value
+ * 
+ * @return Status of Operation
+*/
 static int EcIoWait(const uint32_t port, const uint32_t flag, const char value)
 {
     uint8_t data = inb(port);
@@ -54,6 +66,13 @@ static int EcIoWait(const uint32_t port, const uint32_t flag, const char value)
     return EXIT_SUCCESS;
 }
 
+/**
+ * Read the Port informations
+ * 
+ * @param port The port for waiting
+ * 
+ * @return the Data
+*/
 static uint8_t EcIoRead(const uint32_t port)
 {
     EcIoWait(EC_COMMAND_PORT, IBF, 0);
@@ -68,6 +87,9 @@ static uint8_t EcIoRead(const uint32_t port)
     return value;
 }
 
+/**
+ * Flush the EC
+*/
 static void EcFlush()
 {
     while ((inb(EC_COMMAND_PORT) & 0x1) == 0x1)
@@ -76,6 +98,11 @@ static void EcFlush()
     }
 }
 
+/**
+ * Read a byte from EC
+ * 
+ * @return Returns the current byte
+*/
 static int ReadByte()
 {
     int i = 1000000;
@@ -94,7 +121,12 @@ static int ReadByte()
     }
 }
 
-static int SendCommand(int command)
+/**
+ * Send a command to the ec
+ * 
+ * @param command the comamnd to send
+*/
+static void SendCommand(int command)
 {
     int tt = 0;
     while((inb(EC_COMMAND_PORT) & 2))
@@ -107,18 +139,27 @@ static int SendCommand(int command)
     }
 
     outb(command, EC_COMMAND_PORT);
-    
-    return EXIT_SUCCESS;
 }
 
-static int WriteData(int data)
+/**
+ * Write data to ec
+ * 
+ * @param data the data to write
+*/
+static void WriteData(int data)
 {
     while((inb(EC_COMMAND_PORT) & 2));
 
     outb(data, EC_DATA_PORT);
-    return 0;
 }
 
+/**
+ * Read the Callbackinforamtions Envoiroment and returns the Index of the fan parameter
+ * 
+ * @param info the nodejs CallbackInfo
+ * 
+ * @return The index of the fan
+*/
 static int GetFanDutyIndexParameter(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
@@ -145,6 +186,13 @@ static int GetFanDutyIndexParameter(const Napi::CallbackInfo& info)
     return index;
 }
 
+/**
+ * Read and return the Raw Fan duty of fan
+ * 
+ * @param index the fan index
+ * 
+ * @return the fan duty value
+*/
 static int RawFanDuty(int index)
 {
     EcInit();
@@ -160,7 +208,14 @@ static int RawFanDuty(int index)
     return value;
 }
 
-Napi::Number GetFanDutyNew(const Napi::CallbackInfo& info)
+/**
+ * Get the clean Fan Duty in percent
+ * 
+ * @param info the nodejs CallbackInfo
+ * 
+ * @return The current fan duty of fan in percent
+*/
+Napi::Number GetFanDuty(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     float fan_duty_perc = 0;
@@ -173,7 +228,14 @@ Napi::Number GetFanDutyNew(const Napi::CallbackInfo& info)
     return Napi::Number::New(env, ((int)(fan_duty_perc + 0.5)));
 }
 
-Napi::Number GetRawFanDutyNew(const Napi::CallbackInfo& info)
+/**
+ * Return the raw fan duty (value 0 - 255)
+ * 
+ * @param info the nodejs CallbackInfo
+ * 
+ * @return The current raw fan duty of fan (value 0 - 255)
+*/
+Napi::Number GetRawFanDuty(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
     int index = GetFanDutyIndexParameter(info);
@@ -183,6 +245,13 @@ Napi::Number GetRawFanDutyNew(const Napi::CallbackInfo& info)
     return Napi::Number::New(env, fanDutyValue);
 }
 
+/**
+ * Read and returns the remote temp of the fan
+ * 
+ * @param info the nodejs CallbackInfo
+ * 
+ * @return the remote temp
+*/
 Napi::Number GetRemoteTemp(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
@@ -199,6 +268,13 @@ Napi::Number GetRemoteTemp(const Napi::CallbackInfo& info)
     return Napi::Number::New(env, value);
 }
 
+/**
+ * Read and returns the local temp of the fan 
+ * 
+ * @param info the nodejs CallbackInfo
+ * 
+ * @return the local temp
+*/
 Napi::Number GetLocalTemp(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
@@ -216,12 +292,25 @@ Napi::Number GetLocalTemp(const Napi::CallbackInfo& info)
     return Napi::Number::New(env, value);
 }
 
+/**
+ * Calculate the fan rpms
+ * 
+ * @param raw_rpm_high The raw high rpm value of the fan
+ * @param raw_rpm_low The raw low rpm value of the fan
+*/
 static int calculate_fan_rpms(int raw_rpm_high, int raw_rpm_low)
 {
     int raw_rpm = (raw_rpm_high << 8) + raw_rpm_low;
     return raw_rpm > 0 ? (2156220 / raw_rpm) : 0;
 }
 
+/**
+ * Read and returns the rpm of the fan 
+ * 
+ * @param info the nodejs CallbackInfo
+ * 
+ * @return Returns the fan rpm
+*/
 Napi::Number GetFanRpm(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
@@ -260,6 +349,13 @@ Napi::Number GetFanRpm(const Napi::CallbackInfo& info)
     return Napi::Number::New(env, value); 
 }
 
+/**
+ * Set the fan duty
+ * 
+ * @param info the nodejs CallbackInfo
+ * 
+ * @return Returns a bool to indicate was the operation sucessfully or not
+*/
 Napi::Boolean SetFanDuty(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
@@ -316,6 +412,11 @@ Napi::Boolean SetFanDuty(const Napi::CallbackInfo& info)
     return Napi::Boolean::New(env, true);
 }
 
+/**
+ * Set the fan duty on auto modus
+ * 
+ * @param info the nodejs CallbackInfo
+*/
 void SetAutoFanDuty(const Napi::CallbackInfo& info)
 {
     Napi::Env env = info.Env();
@@ -362,8 +463,8 @@ void SetAutoFanDuty(const Napi::CallbackInfo& info)
 
 Napi::Object init(Napi::Env env, Napi::Object exports)
 {
-    exports.Set(Napi::String::New(env, "nGetFanDuty"), Napi::Function::New(env, GetFanDutyNew));
-    exports.Set(Napi::String::New(env, "nGetRawFanDuty"), Napi::Function::New(env, GetRawFanDutyNew));
+    exports.Set(Napi::String::New(env, "nGetFanDuty"), Napi::Function::New(env, GetFanDuty));
+    exports.Set(Napi::String::New(env, "nGetRawFanDuty"), Napi::Function::New(env, GetRawFanDuty));
     exports.Set(Napi::String::New(env, "nGetLocalTemp"), Napi::Function::New(env, GetLocalTemp));
     exports.Set(Napi::String::New(env, "nGetRemoteTemp"), Napi::Function::New(env, GetRemoteTemp));
     exports.Set(Napi::String::New(env, "nGetFanRpm"), Napi::Function::New(env, GetFanRpm));
