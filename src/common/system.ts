@@ -79,6 +79,11 @@ export class System
         return "";
     }
 
+    /**
+     * Check if the device a TUXEDO device
+     * 
+     * @returns A boolean that indicat is a TUXEDO or not
+     */
     public static isTuxedoDevice(): boolean
     {
         if(this.getDmiModelVendor().toLocaleLowerCase() === "tuxedo")
@@ -248,6 +253,11 @@ export class System
         }
     }
 
+    /**
+     * Sleep function
+     * 
+     * @param milliseconds Sleeptime in milliseconds
+     */
     public static Sleep(milliseconds) 
     {
         return new Promise(resolve => setTimeout(resolve, milliseconds));
