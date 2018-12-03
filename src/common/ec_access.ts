@@ -18,6 +18,13 @@ export class FanInforamtion
     rpm: number;
 }
 
+/**
+ * Read and return the fan informations a return a object of FanInforamtion with the informations
+ * 
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * 
+ * @returns A FanInforamtion with the fan informations 
+ */
 export function getFanInformation(fan: number): FanInforamtion
 {
     const ec_access = Environment.getObject("ec_access");
@@ -34,6 +41,13 @@ export function getFanInformation(fan: number): FanInforamtion
     return fanInformations;
 }
 
+/**
+ * Reads and return the remote temperature of fan
+ * 
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * 
+ * @returns The remote temperature of fan
+ */
 export function getRemoteTemp(fan: number): number
 {
     try
@@ -49,6 +63,13 @@ export function getRemoteTemp(fan: number): number
     }
 }
 
+/**
+ * Reads and return the local temperature of fan
+ * 
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * 
+ * @returns The local temperature of fan
+ */
 export function getLocalTemp(fan: FAN): number
 {
     try
@@ -63,7 +84,13 @@ export function getLocalTemp(fan: FAN): number
     }
 }
 
-
+/**
+ * Reads and retun the fan duty in percent
+ * 
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * 
+ * @returns A number with the fan duty
+ */
 export function getFanDuty(fan: FAN): number
 {
     try
@@ -78,6 +105,13 @@ export function getFanDuty(fan: FAN): number
     }
 }
 
+/**
+ * Reads and return the fan rpm
+ * 
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * 
+ * @returns A number with the fan rpm
+ */
 export function getFanRpm(fan: FAN): number
 {
     try
@@ -92,7 +126,13 @@ export function getFanRpm(fan: FAN): number
     }
 }
 
-
+/**
+ * Reads an returns the raw fan duty (value 0 - 255)
+ * 
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * 
+ * @returns A number with the raw fan duty
+ */
 export function getRawFanDuty(fan: FAN): number
 {
     try
