@@ -135,11 +135,11 @@ export class AppComponent implements OnInit, OnDestroy
         {
             if(this.informations === "")
             {
-                this.informations += "High CPU Temerature";
+                this.informations += "High CPU Temperature";
             }
             else
             {
-                this.informations += ", High CPU Temerature";
+                this.informations += ", High CPU Temperature";
             }
         }
 
@@ -157,11 +157,11 @@ export class AppComponent implements OnInit, OnDestroy
             {
                 if(this.informations === "")
                 {
-                    this.informations += "High GPU 1 Temerature";
+                    this.informations += "High GPU 1 Temperature";
                 }
                 else
                 {
-                    this.informations += ", High GPU 1 Temerature";
+                    this.informations += ", High GPU 1 Temperature";
                 }
             }
 
@@ -177,11 +177,11 @@ export class AppComponent implements OnInit, OnDestroy
             {
                 if(this.informations === "")
                 {
-                    this.informations += "High GPU 2 Temerature";
+                    this.informations += "High GPU 2 Temperature";
                 }
                 else
                 {
-                    this.informations += ", High GPU 2 Temerature";
+                    this.informations += ", High GPU 2 Temperature";
                 }
             }
 

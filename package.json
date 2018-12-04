@@ -38,7 +38,7 @@
                 "tar.gz",
                 "rpm"
             ],
-            "category": "admin",
+            "category": "System",
             "description": "Control the Fan Speed (CPU and GPU) of your TUXEDO Notebook Device"
         },
         "appImage": {
@@ -48,7 +48,7 @@
             "depends": [
                 "xvfb"
             ],
-            "category": "admin",
+            "category": "System",
             "fpm": [
                 "--after-install=./scripts/after_install.sh",
                 "--before-remove=./scripts/before_remove.sh"
