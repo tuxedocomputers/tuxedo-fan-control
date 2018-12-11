@@ -104,8 +104,10 @@ for(let folder of folderToCheck)
                     "target": "es6",
                     "types" : ["node"],
                     "lib": [
-                      "es2017",
-                      "dom"
+                        "es6",
+                        "dom",
+                        "dom.iterable",
+                        "scripthost"
                     ]
                 }
             };

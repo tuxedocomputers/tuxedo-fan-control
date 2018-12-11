@@ -68,6 +68,7 @@ let publicOptions: Array<CommandlineOption> = [
             }
             else
             {
+                require("./common/environment").Environment.setEnvironmentVariable("ec_access", require("./modules/ec_access.node"), "electron");
                 require("./common/environment").Environment.setEnvironmentVariable("fs", require("fs"), "all");
 
                 tuxedoCheckerAndExecuter(() => {
@@ -89,6 +90,7 @@ let publicOptions: Array<CommandlineOption> = [
             }
             else
             {
+                require("./common/environment").Environment.setEnvironmentVariable("ec_access", require("./modules/ec_access.node"), "electron");
                 require("./common/environment").Environment.setEnvironmentVariable("fs", require("fs"), "all");
 
                 tuxedoCheckerAndExecuter(() => {
@@ -110,6 +112,7 @@ let publicOptions: Array<CommandlineOption> = [
             }
             else
             {
+                require("./common/environment").Environment.setEnvironmentVariable("ec_access", require("./modules/ec_access.node"), "electron");
                 require("./common/environment").Environment.setEnvironmentVariable("fs", require("fs"), "all");
 
                 tuxedoCheckerAndExecuter(() => {

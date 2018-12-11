@@ -176,7 +176,7 @@ export function setFanDuty(fan: number, value: number): boolean
 /**
  * Set the Fan Duty on Auto mode
  *
- * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two, 5 = ALL)
  */
 export function setAutoFanDuty(fan: number): void
 {

@@ -66,13 +66,11 @@ export function stop(): void
     if(fs.existsSync(System.PID_FILE_PATH))
     {
         let daemonPid: number = Number(fs.readFileSync(System.PID_FILE_PATH).toString());
-        let stopSuccess: boolean = false;
 
         try
         {
             process.kill(daemonPid, "SIGINT");
             fs.unlinkSync(System.XLOCK_FILE);
-            stopSuccess = true;
         }
         catch (error)
         {
@@ -81,10 +79,7 @@ export function stop(): void
 
         fs.unlinkSync(System.PID_FILE_PATH);
 
-        if(stopSuccess)
-        {
-            setAutoFanDuty(5);
-        }
+        setAutoFanDuty(5);
     }
 }
 
@@ -131,11 +126,17 @@ export function isDaemonRunning(): boolean
         }
         catch(err)
         {
-            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.stdout: " + err.stdout + "\n", { flag: "a"} );
-            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.stderr: " + err.stderr + "\n", { flag: "a"} );
-            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.pid: " + err.pid + "\n", { flag: "a"} );
-            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.signal: " + err.signal + "\n", { flag: "a"} );
-            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.status: " + err.status + "\n", { flag: "a"} );
+            if(err.status !== 1)
+            {
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "Error:\n", { flag: "a"} );
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, err, { flag: "a"} );
+    
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "\n\nerr.stdout: " + err.stdout + "\n", { flag: "a"} );
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.stderr: " + err.stderr + "\n", { flag: "a"} );
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.pid: " + err.pid + "\n", { flag: "a"} );
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.signal: " + err.signal + "\n", { flag: "a"} );
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.status: " + err.status + "\n", { flag: "a"} );
+            }
 
             return false;
         }
