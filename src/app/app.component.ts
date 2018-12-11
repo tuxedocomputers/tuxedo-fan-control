@@ -123,7 +123,7 @@ export class AppComponent implements OnInit, OnDestroy
         this.canCreateUnitFile = !this.canInteractWithUnitFile;
 
         this.canCpuDutyChange = this.canGpuDutyChange = this.isDaemonRunning;
-        this.informations = !this.isDaemonRunning ? "Daemon is active" : "";
+        this.informations = !this.isDaemonRunning ? "Daemon is running" : "Daemon is stopped";
 
         let cpuInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.CPUDATA);
 
