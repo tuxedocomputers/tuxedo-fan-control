@@ -1,5 +1,11 @@
 # Deutsch
 
+## Version 0.1.3b
+- Dokumentieren der, noch nicht dokumentierten, Funktionen
+- Typo Fixes
+- Fix App Kategorie
+- Fix Setzten der Lüfter Geschwindigkeit im Daemon
+
 ## Version 0.1.3
 - Neue Funktionen und Logik zum Ansteuerern der Lüfter
 - Update auf Angular 7
@@ -22,6 +28,12 @@
 - Erste Version
 
 # English
+
+## Version 0.1.3b
+- Documentation functions
+- Typo fixes
+- Fix App Category
+- Fix set fan duty in daemon
 
 ## Version 0.1.3
 - New function and Logic for controlling the fans
