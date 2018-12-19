@@ -1,5 +1,8 @@
 # Deutsch
 
+## Version 0.1.4
+- Klarerer Name für Daemon start und stop
+
 ## Version 0.1.3b
 - Dokumentieren der, noch nicht dokumentierten, Funktionen
 - Typo Fixes
@@ -28,6 +31,9 @@
 - Erste Version
 
 # English
+
+## Version 0.1.4
+- clener name for daemon start and stop
 
 ## Version 0.1.3b
 - Documentation functions
