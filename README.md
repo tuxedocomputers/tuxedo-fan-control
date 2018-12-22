@@ -62,5 +62,12 @@ You will find all artifacts under the `output/build` directory.
 To install, for instance, on Ubuntu, run:
 
 ```sh
-sudo apt install output/build/*.deb
+sudo dpkg -i output/build/*.deb
+```
+
+You can also use `gdebi` provided by `gdebi-core` for the same task:
+
+```sh
+sudo apt install gdebi-core
+sudo gdebi output/build/*.deb
 ```
