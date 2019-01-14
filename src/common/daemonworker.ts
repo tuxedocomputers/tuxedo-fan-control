@@ -35,79 +35,111 @@ export class DaemonWorker
         System.logMessage("gpuMaxTemp: '" + modelInformations.gpuMaxTemp, System.LOGFILE_PATH_DAEMON);
 
         let lastSetCpuDuty: number = 0;
-        let lastSetGpuDuty: number = 0;
-        let hasGpu = modelInformations.hasGpu && System.isNvidiaSmiInstalled();
+        let lastSetGpuOneDuty: number = 0;
+        let lastSetGpuTwoDuty: number = 0;
+        let hasGpu = modelInformations.hasGpu && System.checkIfNvidiaCardExists();
 
         while(true)
         {
             System.logMessage("\n", System.LOGFILE_PATH_DAEMON, false, false);
 
-            let cpuTemp = EC.getCpuTemp();
+            let cpuInformations = EC.getFanInformation(EC.FAN.CPUDATA);
+            let gpuOneInformations: EC.FanInforamtion;
+            let gpuTwoInformations: EC.FanInforamtion;
+
             let cpuSetDuty: number = -1;
+            let gpuOneSetDuty: number = -1;
+            let gpuTwoSetDuty: number = -1;
 
-            let gpuTemp: number = -1;
-            let gpuSetDuty: number = -1;
-
-            if(cpuTemp >= modelInformations.cpuMinTemp && cpuTemp <= modelInformations.cpuMaxTemp)
+            if(cpuInformations.remoteTemp >= modelInformations.cpuMinTemp && cpuInformations.remoteTemp <= modelInformations.cpuMaxTemp)
             {
-                cpuSetDuty = modelInformations.cpuTable.find(x => x.temp == cpuTemp).duty;
+                cpuSetDuty = modelInformations.cpuTable.find(x => x.temp == cpuInformations.remoteTemp).duty;
             }
-            else if(cpuTemp < modelInformations.cpuMinTemp)
+            else if(cpuInformations.remoteTemp < modelInformations.cpuMinTemp)
             {
                 cpuSetDuty = modelInformations.defaultFanDutyCpu;
             }
 
+            await System.Sleep(100);
+
             if(hasGpu)
             {
-                gpuTemp = System.getNvidiaTemperature();
+                gpuOneInformations = EC.getFanInformation(EC.FAN.GPUONEDATA);
 
-                if(gpuTemp >= modelInformations.gpuMinTemp && gpuTemp <= modelInformations.gpuMaxTemp)
+                if(gpuOneInformations.remoteTemp >= modelInformations.gpuMinTemp && gpuOneInformations.remoteTemp <= modelInformations.gpuMaxTemp)
                 {
-                    gpuSetDuty = modelInformations.gpuTable.find(x => x.temp == gpuTemp).duty;
+                    gpuOneSetDuty = modelInformations.gpuTable.find(x => x.temp == gpuOneInformations.remoteTemp).duty;
                 }
-                else if(gpuTemp < modelInformations.gpuMinTemp)
+                else if(gpuOneInformations.remoteTemp < modelInformations.gpuMinTemp)
                 {
-                    gpuSetDuty = modelInformations.defaultFanDutyGpu;
+                    gpuOneSetDuty = modelInformations.defaultFanDutyGpu;
                 }
+
+                await System.Sleep(100);
+
+                gpuTwoInformations = EC.getFanInformation(EC.FAN.GPUTWODATA);
+
+                if(gpuTwoInformations.remoteTemp >= modelInformations.gpuMinTemp && gpuTwoInformations.remoteTemp <= modelInformations.gpuMaxTemp)
+                {
+                    gpuTwoSetDuty = modelInformations.gpuTable.find(x => x.temp == gpuTwoInformations.remoteTemp).duty;
+                }
+                else if(gpuTwoInformations.remoteTemp < modelInformations.gpuMinTemp)
+                {
+                    gpuTwoSetDuty = modelInformations.defaultFanDutyGpu;
+                }
+
+                await System.Sleep(100);
             }
 
-            System.logMessage("Current CPU Temp is " + cpuTemp.toString(), System.LOGFILE_PATH_DAEMON);
-            if(lastSetCpuDuty !== cpuSetDuty && cpuTemp >= modelInformations.cpuMinTemp && cpuTemp <= modelInformations.cpuMaxTemp)
+            System.logMessage("CPU Temp is '" + cpuInformations.remoteTemp.toString() + "' Grad, fan duty: " + cpuInformations.fanDuty.toString(), System.LOGFILE_PATH_DAEMON);
+            if(lastSetCpuDuty !== cpuSetDuty && cpuInformations.remoteTemp >= modelInformations.cpuMinTemp && cpuInformations.remoteTemp <= modelInformations.cpuMaxTemp)
             {
                 System.logMessage("Change CPU Duty", System.LOGFILE_PATH_DAEMON);
                 System.logMessage("Last: '" + lastSetCpuDuty.toString() + "' Current: '" + cpuSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
                 System.logMessage("Set GPU Duty on " + cpuSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
+                
+                let value: number = Math.round((255/100) * cpuSetDuty);
 
-                EC.setCpuFanDuty(cpuSetDuty);
+                EC.setFanDuty(EC.FAN.CPUDATA, value);
 
                 lastSetCpuDuty = cpuSetDuty;
+
+                await System.Sleep(100);
             }
 
-            System.logMessage("Current GPU Temp is " + gpuTemp.toString(), System.LOGFILE_PATH_DAEMON);
-            if(lastSetGpuDuty !== gpuSetDuty && gpuTemp >= modelInformations.gpuMinTemp && gpuTemp <= modelInformations.gpuMaxTemp)
+            System.logMessage("GPU One Temp is '" + gpuOneInformations.remoteTemp.toString() + "' Grad, fan duty: " + gpuOneInformations.fanDuty.toString(), System.LOGFILE_PATH_DAEMON);
+            if(lastSetGpuOneDuty !== gpuOneSetDuty && gpuOneInformations.remoteTemp >= modelInformations.gpuMinTemp && gpuOneInformations.remoteTemp <= modelInformations.gpuMaxTemp)
             {
-                System.logMessage("Change GPU Duty", System.LOGFILE_PATH_DAEMON);
-                System.logMessage("Last: '" + lastSetGpuDuty.toString() + "' Current: '" + gpuSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
-                System.logMessage("Set GPU Duty on " + gpuSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
+                System.logMessage("Change GPU One Duty", System.LOGFILE_PATH_DAEMON);
+                System.logMessage("Last: '" + lastSetGpuOneDuty.toString() + "' Current: '" + gpuOneSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
+                System.logMessage("Set GPU Duty One on " + gpuOneSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
 
-                EC.setGpuFanDuty(gpuSetDuty);
+                let value: number = Math.round((255/100) * gpuOneSetDuty);
 
-                lastSetGpuDuty = gpuSetDuty;
+                EC.setFanDuty(EC.FAN.GPUONEDATA, value);
+
+                lastSetGpuOneDuty = gpuOneSetDuty;
+
+                await System.Sleep(100);
             }
 
-            await this.sleep(1000);
-        }
-    }
+            System.logMessage("GPU Two Temp is '" + gpuTwoInformations.remoteTemp.toString() + "' Grad, fan duty: " + gpuTwoInformations.fanDuty.toString(), System.LOGFILE_PATH_DAEMON);
+            if(lastSetGpuTwoDuty !== gpuTwoSetDuty && gpuTwoInformations.remoteTemp >= modelInformations.gpuMinTemp && gpuTwoInformations.remoteTemp <= modelInformations.gpuMaxTemp)
+            {
+                System.logMessage("Change GPU Two Duty", System.LOGFILE_PATH_DAEMON);
+                System.logMessage("Last: '" + lastSetGpuTwoDuty.toString() + "' Current: '" + gpuTwoSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
+                System.logMessage("Set GPU Duty Two on " + gpuTwoSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
 
-    /**
-     * Sleep function
-     *
-     * @param ms Milliseconds to sleep
-     */
-    private static sleep(ms: number)
-    {
-        return new Promise(resolve => {
-            setTimeout(resolve,ms);
-        });
+                let value: number = Math.round((255/100) * gpuTwoSetDuty);
+            
+                EC.setFanDuty(EC.FAN.GPUTWODATA, gpuTwoSetDuty);
+
+                lastSetGpuTwoDuty = gpuTwoSetDuty;
+
+                await System.Sleep(100);
+            }
+
+            await System.Sleep(1000);
+        }
     }
 }

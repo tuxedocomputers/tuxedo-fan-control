@@ -21,13 +21,22 @@ export class AppModule
     {
         Environment.setDaemonMode(false);
 
-        if((<any>window).require("electron").remote.getGlobal("exportMode"))
+        if((<any>window).require("electron").remote.getGlobal("expertMode"))
         {
-            Environment.setEnvironmentVariable("exportMode", true, "electron");
+            Environment.setEnvironmentVariable("expertMode", true, "electron");
         }
         else
         {
-            Environment.setEnvironmentVariable("exportMode", false, "electron");
+            Environment.setEnvironmentVariable("expertMode", false, "electron");
+        }
+
+        if((<any>window).require("electron").remote.getGlobal("vendorcheck"))
+        {
+            Environment.setEnvironmentVariable("vendorcheck", true, "electron");
+        }
+        else
+        {
+            Environment.setEnvironmentVariable("vendorcheck", false, "electron");
         }
 
         Environment.setEnvironmentVariable("fs", (<any>window).require("fs"), "electron");

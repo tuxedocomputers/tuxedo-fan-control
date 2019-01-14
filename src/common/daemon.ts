@@ -3,6 +3,7 @@ import * as process from "process";
 import * as child_process from "child_process";
 import * as fs from "fs";
 import { System } from "./system";
+import { setAutoFanDuty } from "./ec_access";
 
 /**
  * Starts the Daemon
@@ -77,6 +78,8 @@ export function stop(): void
         }
 
         fs.unlinkSync(System.PID_FILE_PATH);
+
+        setAutoFanDuty(5);
     }
 }
 
@@ -123,11 +126,17 @@ export function isDaemonRunning(): boolean
         }
         catch(err)
         {
-            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.stdout: " + err.stdout + "\n", { flag: "a"} );
-            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.stderr: " + err.stderr + "\n", { flag: "a"} );
-            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.pid: " + err.pid + "\n", { flag: "a"} );
-            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.signal: " + err.signal + "\n", { flag: "a"} );
-            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.status: " + err.status + "\n", { flag: "a"} );
+            if(err.status !== 1)
+            {
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "Error:\n", { flag: "a"} );
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, err, { flag: "a"} );
+    
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "\n\nerr.stdout: " + err.stdout + "\n", { flag: "a"} );
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.stderr: " + err.stderr + "\n", { flag: "a"} );
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.pid: " + err.pid + "\n", { flag: "a"} );
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.signal: " + err.signal + "\n", { flag: "a"} );
+                fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "err.status: " + err.status + "\n", { flag: "a"} );
+            }
 
             return false;
         }

@@ -1,5 +1,5 @@
 .entrytitlespan {
-    width: 150px;
+    width: 175px;
     margin-right: 5px;
 }
 
@@ -20,7 +20,7 @@
 }
 
 .servicefileactions {
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 .servicefileactions > button { 

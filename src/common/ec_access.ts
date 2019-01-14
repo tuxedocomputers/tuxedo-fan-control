@@ -1,192 +1,193 @@
 import { System } from "./system";
 import { Environment } from "./environment";
 
+export enum FAN
+{
+    CPUDATA = 1,
+    GPUONEDATA = 2,
+    GPUTWODATA = 3
+}
+
+export class FanInforamtion
+{
+    fanId: number;
+    remoteTemp: number;
+    localTemp: number;
+    fanDuty: number;
+    rawFanDuty: number;
+    rpm: number;
+}
+
 /**
- * Get the CPU temperature
- *
- * @returns Returns an number with the CPU temperature in Grad Celsius
+ * Read and return the fan informations a return a object of FanInforamtion with the informations
+ * 
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * 
+ * @returns A FanInforamtion with the fan informations 
  */
-export function getCpuTemp(): number
+export function getFanInformation(fan: number): FanInforamtion
+{
+    const ec_access = Environment.getObject("ec_access");
+    let fanInformations: FanInforamtion = new FanInforamtion();
+    let fd: number = ec_access.nGetRawFanDuty(fan);
+
+    fanInformations.fanId = fan;
+    fanInformations.rawFanDuty = fd;
+    fanInformations.fanDuty = (fd / 255) * 100;
+    fanInformations.remoteTemp = ec_access.nGetRemoteTemp(fan);
+    fanInformations.localTemp = ec_access.nGetLocalTemp(fan);
+    //fanInformations.rpm = ec_access.nGetFanRpm(fan);
+
+    return fanInformations;
+}
+
+/**
+ * Reads and return the remote temperature of fan
+ * 
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * 
+ * @returns The remote temperature of fan
+ */
+export function getRemoteTemp(fan: number): number
 {
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        return ec_access.getCpuTemp();
+        let temp = ec_access.nGetRemoteTemp(fan);
+        return temp;
     }
     catch (error)
     {
+        console.log("getTemp (Index: " + fan + ") Error: " + error);
         return 0;
     }
 }
 
 /**
- * Get the CPU fan duty
- *
- * @returns A number with CPU fan duty in percent
+ * Reads and return the local temperature of fan
+ * 
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * 
+ * @returns The local temperature of fan
  */
-export function getCpuFanDuty(): number
+export function getLocalTemp(fan: FAN): number
 {
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        return ec_access.getCpuFanDuty();
+        return ec_access.nGetLocalTemp(fan);
     }
     catch (error)
     {
+        console.log("getTemp (Index: " + fan + ") Error: " + error);
         return 0;
     }
 }
 
 /**
- * Get the raw CPU fan duty (raw value from EC)
- *
- * @returns A number with raw CPU fan duty
+ * Reads and retun the fan duty in percent
+ * 
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * 
+ * @returns A number with the fan duty
  */
-export function getRawCpuFanDuty(): number
+export function getFanDuty(fan: FAN): number
 {
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        return ec_access.getRawCpuFanDuty();
+        return ((ec_access.nGetFanDuty(fan) / 255) * 100);
     }
     catch (error)
     {
+        console.log("getFanDuty (Index: " + fan + ") Error: " + error);
         return 0;
     }
 }
 
 /**
- * Get the CPU fan RPM value
- *
- * @returns A number with CPU fan rpm
+ * Reads and return the fan rpm
+ * 
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * 
+ * @returns A number with the fan rpm
  */
-export function getCpuFanRpm(): number
+export function getFanRpm(fan: FAN): number
 {
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        return ec_access.getCpuFanRpm();
+        return ec_access.nGetFanRpm(fan);
     }
     catch (error)
     {
+        console.log("getFanRpm (Index: " + fan + ") Error: " + error);
         return 0;
     }
 }
 
 /**
- * Get the GPU temperature
- *
- * @returns Returns an number with the GPU temperature in Grad Celsius
+ * Reads an returns the raw fan duty (value 0 - 255)
+ * 
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
+ * 
+ * @returns A number with the raw fan duty
  */
-export function getGpuTemp(): number
+export function getRawFanDuty(fan: FAN): number
 {
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        return ec_access.getGpuTemp();
+        return ec_access.nGetRawFanDuty(fan);
     }
     catch (error)
     {
+        console.log("getRawFanDuty (Index: " + fan + ") Error: " + error);
         return 0;
     }
 }
 
 /**
- * Get the GPU fan duty
+ * Set the Fan Duty
  *
- * @returns A number with GPU fan duty in percent
- */
-export function getGpuFanDuty(): number
-{
-    try
-    {
-        const ec_access = Environment.getObject("ec_access");
-        return ec_access.getGpuFanDuty();
-    }
-    catch (error)
-    {
-        return 0;
-    }
-}
-
-/**
- * Get the raw GPU fan duty (raw value from EC)
- *
- * @returns A number with raw GPU fan duty
- */
-export function getRawGpuFanDuty(): number
-{
-    try
-    {
-        const ec_access = Environment.getObject("ec_access");
-        return ec_access.getRawGpuFanDuty();
-    }
-    catch (error)
-    {
-        return 0;
-    }
-}
-
-/**
- * Get the GPU fan RPM value
- *
- * @returns A number with GPU fan rpm
- */
-export function getGpuFanRpm(): number
-{
-    try
-    {
-        const ec_access = Environment.getObject("ec_access");
-        return ec_access.getGpuFanRpm();
-    }
-    catch (error)
-    {
-        return 0;
-    }
-}
-
-/**
- * Set the CPU Fan Duty
- *
- * @param value CPU Fan Duty Value in percent
- *
- * @returns A boolean, thats indication if the operation successful (true) or not (false)
- */
-export function setCpuFanDuty(value: number): boolean
-{
-    try
-    {
-        const ec_access = Environment.getObject("ec_access");
-        let result = ec_access.setCpuFanDuty(value);
-
-        return result;
-    }
-    catch (error)
-    {
-        return false;
-    }
-}
-
-/**
- * Set the GPU Fan Duty
- *
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two)
  * @param value GPU Fan Duty Value in percent
  *
  * @returns A boolean, thats indication if the operation successful (true) or not (false)
  */
-export function setGpuFanDuty(value: number): boolean
+export function setFanDuty(fan: number, value: number): boolean
 {
     try
     {
         const ec_access = Environment.getObject("ec_access");
-        let result = ec_access.setGpuFanDuty(value);
+        let result = ec_access.nSetFanDuty(fan, value);
 
         return result;
     }
     catch (error)
     {
-        Environment.getObject("log")("setGpuFanDuty error: " + error);
+        console.log("setFanDuty Error: " + error);
+        Environment.getObject("log")("setFanDuty error: " + error);
 
         return false;
+    }
+}
+
+/**
+ * Set the Fan Duty on Auto mode
+ *
+ * @param fan The Fan Number (1 = CPU, 2 = GPU One, 3 = GPU Two, 5 = ALL)
+ */
+export function setAutoFanDuty(fan: number): void
+{
+    try
+    {
+        const ec_access = Environment.getObject("ec_access");
+        ec_access.nSetAutoFanDuty(fan);
+    }
+    catch (error)
+    {
+        console.log("setAutoFanDuty Error: " + error);
+        Environment.getObject("log")("setFanDuty error: " + error);
     }
 }

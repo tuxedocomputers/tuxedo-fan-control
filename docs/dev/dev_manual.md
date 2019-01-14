@@ -2,13 +2,14 @@
 
 - [Building](#building)
 - [Hidden Start Parameters](#hidden-start-parameters)
-    - [--debugfan](#--debugfan)
-    - [--daemon](#--daemon)
-    - [--expert](#--expert)
+    - [--debugfan](#debugfan)
+    - [--daemon](#daemon)
+    - [--expert](#expert)
+    - [--novendorcheck](#novendorcheck)
 - [Paths and Names](#paths-and-names)
 - [Known Issues](#known-issues)
-    - [Control more as One GPU Fan](#control-more-as-one-gpu-fan)
-    - [Default Fan Mode](#default-fan-mode)
+    - [Fan RPMs](#fan-rpms)
+    - [Set Fan Duty Value in UI (Export Mode )](#set-fan-duty-value-in-ui-export-mode)
 
 <!-- /TOC -->
 
@@ -29,6 +30,9 @@ With this Parameter starts the TUXEDO Fan Control in the Daemon Mode.
 ## --expert
 With this Parameter can set custom fan duty in UI.
 
+## --novendorcheck
+Disable the Vendor Check. Use at your own risk for non TUXEDO devices.
+
 # Paths and Names
 
 | File                  | Path                                          |
@@ -42,10 +46,8 @@ With this Parameter can set custom fan duty in UI.
 | Bin Symlink           | /usr/bin/tuxedofancontrol                     |
 
 # Known Issues
+## Fan RPMs
+Currently dont work correctly the Fan RPMs Information, therefore we disable this.
 
-## Control more as One GPU Fan
-We can currently control only one fan from the Nvidia graphic cards (If the graphic card have multiple fans)
-
-## Default Fan Mode
-Currently cannot set to the default fan mode from the software side. You can reset the fan control over FN+1 or restart your device (Check if the daemon / systemd service is not running).
-
+## Set Fan Duty Value in UI (Export Mode )
+Currently this values are not percent values, but a value between 1 and 255.

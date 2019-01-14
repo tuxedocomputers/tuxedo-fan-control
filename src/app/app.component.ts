@@ -4,6 +4,8 @@ import { System } from "../common/system";
 import { Observable, timer } from 'rxjs'
 import { readFanTables, FanTable } from '../common/fanTable';
 import { Environment } from '../common/environment';
+import * as $ from 'jquery';
+import "bootstrap";
 
 @Component({
     selector: 'app-root',
@@ -17,13 +19,17 @@ export class AppComponent implements OnInit, OnDestroy
     public gpuInformations: string;
     public informations: string = "--";
 
-    public cpuTemp: number;
-    public cpuFanDuty: number;
-    public cpuFanRpm: number;
+    public cpuTemp: number = 0;
+    public cpuFanDuty: number = 0;
+    // public cpuFanRpm: number = 0;
 
-    public gpuTemp: number;
-    public gpuFanDuty: number;
-    public gpuFanRpm: number;
+    public gpuOneTemp: number = 0;
+    public gpuOneFanDuty: number = 0;
+    // public gpuOneFanRpm: number = 0;
+
+    public gpuTwoTemp: number = 0;
+    public gpuTwoFanDuty: number = 0;
+    // public gpuTwoFanRpm: number = 0;
 
     public canCpuDutyChange: boolean = true;
     public canGpuDutyChange: boolean = true;
@@ -37,6 +43,8 @@ export class AppComponent implements OnInit, OnDestroy
     public canInteractWithUnitFile: boolean = true;
     public expertMode: boolean = false;
 
+    public nvidaCardExists: boolean = false;
+
     private _updateValuesWorker: any;
 
     ngOnInit(): void
@@ -48,7 +56,17 @@ export class AppComponent implements OnInit, OnDestroy
             return;
         }
 
-        this.expertMode = Environment.getObject("exportMode");
+        if(Environment.getObject("vendorcheck") && !System.isTuxedoDevice())
+        {
+            $("#notuxedomodal").modal("toggle");
+            this.informations = "No TUXEDO device";
+            return;
+        }
+
+        this.expertMode = Environment.getObject("expertMode");
+
+        this.nvidaCardExists = System.checkIfNvidiaCardExists();
+        System.logMessage("Nvidia Card Exist: " + this.nvidaCardExists);
 
         System.logMessage("AppComponent - ngOnInit - Setup logic");
 
@@ -70,21 +88,22 @@ export class AppComponent implements OnInit, OnDestroy
             this.fanTableInformation = "No Fan Table found";
         }
 
-        if(this._fanTable.hasGpu)
+        if(this.nvidaCardExists)
         {
-            System.logMessage("AppComponent - ngOnInit - GPU Fan Table exist");
-            this.gpuInformations = "GPU Fan Table exist";
+            if(this._fanTable.hasGpu)
+            {
+                System.logMessage("AppComponent - ngOnInit - GPU Fan Table exist");
+                this.gpuInformations = "GPU Fan Table exist";
+            }
+            else
+            {
+                System.logMessage("AppComponent - ngOnInit - NO GPU Fan Table exist");
+                this.gpuInformations = "NO GPU Fan Table exist";
+            }
         }
         else
         {
-            System.logMessage("AppComponent - ngOnInit - NO GPU Fan Table exist");
-            this.gpuInformations = "NO GPU Fan Table exist";
-        }
-
-        if(this._fanTable.hasGpu && !System.isNvidiaSmiInstalled())
-        {
-            System.logMessage("AppComponent - ngOnInit - NVIDIA SMI is missing");
-            this.gpuInformations += ", NVIDIA SMI is missing";
+            this.gpuInformations = "No GPU exist"
         }
     }
 
@@ -94,8 +113,9 @@ export class AppComponent implements OnInit, OnDestroy
         this._updateValuesWorker.unsubscribe();
     }
 
-    private setValues(): void
+    private async setValues()
     {
+        console.log("begin setValues");
         this.informations = "";
         this.isDaemonRunning = !(<any>window).require("../common/daemon").isDaemonRunning();
 
@@ -103,98 +123,113 @@ export class AppComponent implements OnInit, OnDestroy
         this.canCreateUnitFile = !this.canInteractWithUnitFile;
 
         this.canCpuDutyChange = this.canGpuDutyChange = this.isDaemonRunning;
-        this.informations = !this.isDaemonRunning ? "Daemon is active" : "";
+        this.informations = !this.isDaemonRunning ? "Daemon is running" : "Daemon is stopped";
 
-        this.cpuTemp = ec_access.getCpuTemp();
-        this.cpuFanDuty = ec_access.getCpuFanDuty();
-        this.cpuFanRpm = ec_access.getCpuFanRpm();
+        let cpuInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.CPUDATA);
+
+        this.cpuTemp = cpuInfos.remoteTemp;
+        this.cpuFanDuty = Math.round(cpuInfos.fanDuty);
+        // this.cpuFanRpm = cpuInfos.rpm;
 
         if(this.cpuTemp >= 70)
         {
             if(this.informations === "")
             {
-                this.informations += "High CPU Temerature";
+                this.informations += "High CPU Temperature";
             }
             else
             {
-                this.informations += ", High CPU Temerature";
+                this.informations += ", High CPU Temperature";
             }
         }
 
-        if(System.isNvidiaSmiInstalled())
-        {
-            this.gpuTemp = System.getNvidiaTemperature();
-            this.gpuFanDuty = ec_access.getGpuFanDuty();
-            this.gpuFanRpm = ec_access.getGpuFanRpm();
+        await System.Sleep(100);
 
-            if(this.gpuTemp >= 70)
+        if(this.nvidaCardExists)
+        {
+            let gpuOneInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.GPUONEDATA);
+
+            this.gpuOneTemp = gpuOneInfos.localTemp;
+            this.gpuOneFanDuty = Math.round(gpuOneInfos.fanDuty);
+            // this.gpuOneFanRpm = gpuOneInfos.rpm;
+
+            if(this.gpuOneTemp >= 70)
             {
                 if(this.informations === "")
                 {
-                    this.informations += "High GPU Temerature";
+                    this.informations += "High GPU 1 Temperature";
                 }
                 else
                 {
-                    this.informations += ", High GPU Temerature";
+                    this.informations += ", High GPU 1 Temperature";
                 }
             }
+
+            await System.Sleep(100);
+
+            let gpuTwoInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.GPUTWODATA);
+
+            this.gpuTwoTemp = gpuTwoInfos.localTemp;
+            this.gpuTwoFanDuty = Math.round(gpuTwoInfos.fanDuty);
+            // this.gpuTwoFanRpm = gpuTwoInfos.rpm;
+
+            if(this.gpuTwoTemp >= 70)
+            {
+                if(this.informations === "")
+                {
+                    this.informations += "High GPU 2 Temperature";
+                }
+                else
+                {
+                    this.informations += ", High GPU 2 Temperature";
+                }
+            }
+
+            await System.Sleep(100);
         }
     }
 
-    public setCpuFanDuty(valueString: string): void
+    public setFanDuty(fan: number, valueString: string): void
     {
-        System.logMessage("AppComponent - setCpuFanDuty - start");
+        System.logMessage("AppComponent - setFanDuty - start");
 
-        System.logMessage("AppComponent - setCpuFanDuty - parse value");
+        System.logMessage("AppComponent - setFanDuty - parse value");
         let value: number = Number.parseInt(valueString);
 
-        System.logMessage("AppComponent - setCpuFanDuty - set cpu fan duty on: " + value);
-        if(value < 1 || value > 100)
+        System.logMessage("AppComponent - setFanDuty - set for value fan (" + fan.toString() + ") duty on: " + value);
+        if(value < 1 || value > 255)
         {
-            System.logMessage("AppComponent - setCpuFanDuty - Invalid CPU Duty Speed! Possible values are between 1 and 100");
-            this.informations = "Invalid CPU Duty Speed! Possible values are between 1 and 100";
+            System.logMessage("AppComponent - setFanDuty - Invalid Duty Speed! Possible values are between 1 and 255");
+            this.informations = "Invalid Duty Speed! Possible values are between 1 and 255";
             return;
         }
 
         try
         {
-            System.logMessage("AppComponent - setCpuFanDuty - set cpu fan duty");
-            let result = ec_access.setCpuFanDuty(value);
-            System.logMessage("AppComponent - setCpuFanDuty - result: " + result);
+            System.logMessage("AppComponent - setFanDuty - set fan duty");
+            let result = ec_access.setFanDuty(fan, value);
+            System.logMessage("AppComponent - setFanDuty - result: " + result);
         }
         catch (error)
         {
-            System.logMessage("AppComponent - setCpuFanDuty - Error at setting CPU Fan Duty. " + error);
-            this.informations = "Error at setting CPU Fan Duty. " + error;
+            System.logMessage("AppComponent - setFanDuty - Error at setting Fan Duty. " + error);
+            this.informations = "Error at setting Fan Duty. " + error;
         }
     }
 
-    public setGpuFanDuty(valueString: string): void
+    public setAutoFanDuty(fan: number): void
     {
-        System.logMessage("AppComponent - setGpuFanDuty - start");
-
-        System.logMessage("AppComponent - setGpuFanDuty - parse value");
-        let value: number = Number.parseInt(valueString);
-
-        System.logMessage("AppComponent - setGpuFanDuty - set gpu fan duty on: " + value);
-
-        if(value < 1 || value > 100)
-        {
-            System.logMessage("AppComponent - setGpuFanDuty - Invalid GPU Duty Speed! Possible values are between 1 and 100");
-            this.informations = "Invalid GPU Duty Speed! Possible values are between 1 and 100";
-            return;
-        }
+        System.logMessage("AppComponent - setAutoFanDuty - start");
 
         try
         {
-            System.logMessage("AppComponent - setGpuFanDuty - set cpu fan duty");
-            let result = ec_access.setGpuFanDuty(value);
-            System.logMessage("AppComponent - setGpuFanDuty - result: " + result);
+            System.logMessage("AppComponent - setAutoFanDuty - set fan duty");
+            ec_access.setAutoFanDuty(fan);
         }
         catch (error)
         {
-            System.logMessage("AppComponent - setGpuFanDuty - Error at setting GPU Fan Duty. " + error);
-            this.informations = "Error at setting GPU Fan Duty. " + error;
+            System.logMessage("AppComponent - setAutoFanDuty - Error at setting Fan Duty. " + error);
+            this.informations = "Error at setting Auto Fan Duty. " + error;
         }
     }
 
@@ -231,5 +266,10 @@ export class AppComponent implements OnInit, OnDestroy
     {
         System.logMessage("AppComponent - restartDaemon");
         System.restartDaemon();
+    }
+
+    public closeApplication(): void
+    {
+        (<any>window).require("electron").remote.getCurrentWindow().close();
     }
 }

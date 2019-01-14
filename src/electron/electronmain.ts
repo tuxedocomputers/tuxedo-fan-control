@@ -20,6 +20,8 @@ if(!fs.existsSync(path.dirname(logFilePath)))
 
 require("./common/environment").Environment.setEnvironmentVariable("isUserRoot", isUserRoot, "all");
 require("./common/environment").Environment.setEnvironmentVariable("appPath", process.execPath, "all");
+require("./common/environment").Environment.setEnvironmentVariable("vendorcheck", true, "all");
+(<any>global).vendorcheck = true;
 
 let publicOptions: Array<CommandlineOption> = [
     {
@@ -41,6 +43,21 @@ let publicOptions: Array<CommandlineOption> = [
         }
     },
     {
+        option: "-s",
+        optionLong: "--show",
+        description: "Get the Current Fan Informations",
+        action: (arg, index, array) => {
+            let environment = require("./common/environment").Environment;
+            environment.setDaemonMode(false);
+            environment.setEnvironmentVariable("child_process", require("child_process"), "electron");
+            environment.setEnvironmentVariable("fs", require("fs"), "electron");
+            environment.setEnvironmentVariable("ec_access", require("./modules/ec_access.node"), "electron");
+
+            tuxedoCheckerAndExecuter(printCurrentFanInformations);
+            process.exit();
+        }
+    },
+    {
         option: null,
         optionLong: "--startdaemon",
         description: "Start TUXEDO Control Center Daemon",
@@ -51,7 +68,12 @@ let publicOptions: Array<CommandlineOption> = [
             }
             else
             {
-                require("./common/daemon").start();
+                require("./common/environment").Environment.setEnvironmentVariable("ec_access", require("./modules/ec_access.node"), "electron");
+                require("./common/environment").Environment.setEnvironmentVariable("fs", require("fs"), "all");
+
+                tuxedoCheckerAndExecuter(() => {
+                    require("./common/daemon").start();
+                });
             }
 
             process.exit();
@@ -68,7 +90,12 @@ let publicOptions: Array<CommandlineOption> = [
             }
             else
             {
-                require("./common/daemon").stop();
+                require("./common/environment").Environment.setEnvironmentVariable("ec_access", require("./modules/ec_access.node"), "electron");
+                require("./common/environment").Environment.setEnvironmentVariable("fs", require("fs"), "all");
+
+                tuxedoCheckerAndExecuter(() => {
+                    require("./common/daemon").stop();
+                });
             }
 
             process.exit();
@@ -85,7 +112,12 @@ let publicOptions: Array<CommandlineOption> = [
             }
             else
             {
-                require("./common/daemon").restop();
+                require("./common/environment").Environment.setEnvironmentVariable("ec_access", require("./modules/ec_access.node"), "electron");
+                require("./common/environment").Environment.setEnvironmentVariable("fs", require("fs"), "all");
+
+                tuxedoCheckerAndExecuter(() => {
+                    require("./common/daemon").restart();
+                });
             }
 
             process.exit();
@@ -96,7 +128,9 @@ let publicOptions: Array<CommandlineOption> = [
         optionLong: "--statusdaemon",
         description: "Get the status of TUXEDO Control Center Daemon",
         action: (arg, index, array) => {
-            printdaemonstatus();
+            require("./common/environment").Environment.setEnvironmentVariable("fs", require("fs"), "all");
+
+            tuxedoCheckerAndExecuter(printdaemonstatus);
             process.exit();
         }
     },
@@ -111,19 +145,21 @@ let publicOptions: Array<CommandlineOption> = [
             }
             else
             {
-                try
-                {
-                    let environment = require("./common/environment").Environment;
-                    environment.setEnvironmentVariable("fs", require("fs"), "electron");
-                    environment.setEnvironmentVariable("path", require("path"), "electron");
+                let environment = require("./common/environment").Environment;
+                environment.setEnvironmentVariable("fs", require("fs"), "electron");
+                environment.setEnvironmentVariable("path", require("path"), "electron");
 
-                    require("./common/system").System.createUnitFile();
-                }
-                catch(error)
-                {
-                    console.log("Error at create unit file");
-                    console.log(error);
-                }
+                tuxedoCheckerAndExecuter(() => {
+                    try
+                    {    
+                        require("./common/system").System.createUnitFile();
+                    }
+                    catch(error)
+                    {
+                        console.log("Error at create unit file");
+                        console.log(error);
+                    }
+                });
             }
 
             process.exit();
@@ -140,19 +176,21 @@ let publicOptions: Array<CommandlineOption> = [
             }
             else
             {
-                try
-                {
-                    let environment = require("./common/environment").Environment;
-                    environment.setEnvironmentVariable("fs", require("fs"), "electron");
-                    environment.setEnvironmentVariable("path", require("path"), "electron");
+                let environment = require("./common/environment").Environment;
+                environment.setEnvironmentVariable("fs", require("fs"), "electron");
+                environment.setEnvironmentVariable("path", require("path"), "electron");
 
-                    require("./common/system").System.removeUnitFile();
-                }
-                catch(error)
-                {
-                    console.log("Error at remove unit file");
-                    console.log(error);
-                }
+                tuxedoCheckerAndExecuter(() => {
+                    try
+                    {
+                        require("./common/system").System.removeUnitFile();
+                    }
+                    catch(error)
+                    {
+                        console.log("Error at remove unit file");
+                        console.log(error);
+                    }
+                });
             }
 
             process.exit();
@@ -177,30 +215,31 @@ let privateOptions: Array<CommandlineOption> = [
                 console.log("User is not root, abort.");
                 process.exit(1);
             }
+            let environment = require("./common/environment").Environment;
+            environment.setDaemonMode(true);
+            environment.setEnvironmentVariable("fs", require("fs"), "daemon");
 
-            try
-            {
-                fs.writeFileSync(logFilePath, "Configure daemon", { flag: "a" });
+            tuxedoCheckerAndExecuter(() => { 
+                try
+                {
+                    fs.writeFileSync(logFilePath, "Configure daemon", { flag: "a" });
+                    
+                    environment.setEnvironmentVariable("os", require("os"), "daemon");
+                    environment.setEnvironmentVariable("path", require("path"), "daemon");
+                    environment.setEnvironmentVariable("child_process", require("child_process"), "daemon");
+                    environment.setEnvironmentVariable("log", console.log, "daemon");
+                    environment.setEnvironmentVariable("ec_access", require("./modules/ec_access.node"), "daemon");
+                    environment.setEnvironmentVariable("appPath", app.getAppPath(), "daemon");
 
-                let environment = require("./common/environment").Environment;
-                environment.setDaemonMode(true);
-
-                environment.setEnvironmentVariable("fs", require("fs"), "daemon");
-                environment.setEnvironmentVariable("os", require("os"), "daemon");
-                environment.setEnvironmentVariable("path", require("path"), "daemon");
-                environment.setEnvironmentVariable("child_process", require("child_process"), "daemon");
-                environment.setEnvironmentVariable("log", console.log, "daemon");
-                environment.setEnvironmentVariable("ec_access", require("./modules/ec_access.node"), "daemon");
-                environment.setEnvironmentVariable("appPath", app.getAppPath(), "daemon");
-
-                require("./common/daemonworker").DaemonWorker.start();
-                showElectronWindow = false;
-                runAsDaemon = true;
-            }
-            catch (error)
-            {
-                fs.writeFileSync(logFilePath, "Error at start daemon, error: " + error + "\n", { flag: "a" });
-            }
+                    require("./common/daemonworker").DaemonWorker.start();
+                    showElectronWindow = false;
+                    runAsDaemon = true;
+                }
+                catch (error)
+                {
+                    fs.writeFileSync(logFilePath, "Error at start daemon, error: " + error + "\n", { flag: "a" });
+                }
+            });
         }
     },
     {
@@ -208,7 +247,15 @@ let privateOptions: Array<CommandlineOption> = [
         optionLong: "--expert",
         description: "",
         action: (arg, index, array) => { 
-            (<any>global).exportMode = true;
+            (<any>global).expertMode = true;
+         }
+    },
+    {
+        option: null,
+        optionLong: "--novendorcheck",
+        description: "",
+        action: (arg, index, array) => { 
+            (<any>global).vendorcheck = false;
          }
     }
 ];
@@ -219,7 +266,7 @@ parseCommandLine();
 function createWindow(): void
 {
     mainWindow = new BrowserWindow({
-        height: 340,
+        height: 400,
         width: 880,
         icon: path.join(__dirname, "data", "32x32.png"),
         title: "TUXEDO Fan Control"
@@ -301,6 +348,46 @@ function printdaemonstatus(): void
     let daemon = require("./common/daemon");
     console.log("Is Running: " + daemon.isDaemonRunning());
     console.log("Daemon PID: " + daemon.getDaemonPid());
+}
+
+function printCurrentFanInformations(): void
+{
+    let ec_access = require("./common/ec_access");
+    let system = require("./common/system").System;
+    let cpuInfos = ec_access.getFanInformation(ec_access.FAN.CPUDATA);
+    let gpuOneInfon = null;
+    let gpuTwoInfon = null;
+
+    console.log(cpuInfos);
+
+    if(system.checkIfNvidiaCardExists())
+    {
+        console.log("Nvidia Card exist");
+        gpuOneInfon = ec_access.getFanInformation(ec_access.FAN.GPUONEDATA);
+        
+        for(let i = 0; i < 100000; i++) {}
+
+        gpuTwoInfon = ec_access.getFanInformation(ec_access.FAN.GPUTWODATA);
+
+        console.log(gpuOneInfon);
+        console.log(gpuTwoInfon);
+    }
+    else
+    {
+        console.log("Nvidia Card does not exist");
+    }
+}
+
+function tuxedoCheckerAndExecuter(func: Function): void
+{
+    if((<any>global).vendorcheck && !require("./common/system").System.isTuxedoDevice())
+    {
+        console.log("No TUXEDO device found");
+    }
+    else if(!(<any>global).vendorcheck || ((<any>global).vendorcheck && require("./common/system").System.isTuxedoDevice()))
+    {
+        func();
+    }
 }
 
 class CommandlineOption

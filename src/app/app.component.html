@@ -15,11 +15,32 @@
     <button id="openModalButton" class="btn btn-link" data-toggle="modal" data-target="#infomodal">Program Informations</button>
 </div>
 
+<div class="modal fade" id="notuxedomodal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Sorry</h5>
+                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> -->
+            </div>
+            <div class="modal-body">
+                <p>You use not a TUXEDO device...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        (click)="closeApplication()">Close Application</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="infomodal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Program Inforamtions</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Program Informations</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -53,6 +74,9 @@
                             <button button type="button" class="btn btn-link" (click)="openLink('https://getbootstrap.com/');">Bootstrap</button>
                         </li>
                         <li>
+                            <button button type="button" class="btn btn-link" (click)="openLink('https://jquery.com/');">jQuery</button>
+                        </li>
+                        <li>
                             <button button type="button" class="btn btn-link" (click)="openLink('https://github.com/nodejs/node-addon-api');">node-addon-api</button>
                         </li>
                         <li>
@@ -80,47 +104,90 @@
     </div>
 </div>
 
-
 <div class="infodiv">
-  <div style="margin-right: 50px;">
-    <h2>CPU</h2>
+    <div style="width: 100%;">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#cpu" role="tab" aria-controls="home" aria-selected="true">CPU</a>
+            </li>
+            <li class="nav-item" [hidden]="!nvidaCardExists">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#gpu" role="tab" aria-controls="profile" aria-selected="false">GPU</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="cpu" role="tabpanel" aria-labelledby="cpu-tab">
+                <h2>CPU Fan Informationen</h2>
+                <div class="entrycontainer">
+                    <div class="entrytitlespan">CPU Temp:</div><span>{{ cpuTemp }}</span>
+                </div>
+                <div class="entrycontainer">
+                    <div class="entrytitlespan">CPU FAN Duty (in %):</div><span>{{ cpuFanDuty }}</span>
+                </div>
+                <!-- <div class="entrycontainer">
+                    <div class="entrytitlespan">CPU FAN RPMs:</div><span>{{ cpuFanRpm }}</span>
+                </div> -->
 
-    <div class="entrycontainer">
-      <div class="entrytitlespan">CPU Temp:</div><span>{{ cpuTemp }}</span>
-    </div>
-    <div class="entrycontainer">
-      <div class="entrytitlespan">CPU FAN Duty:</div><span>{{ cpuFanDuty }}</span>
-    </div>
-    <div class="entrycontainer">
-      <div class="entrytitlespan">CPU FAN RPMs:</div><span>{{ cpuFanRpm }}</span>
-    </div>
+                <div class="entrycontainer" [hidden]="!expertMode">
+                    <div class="entrytitlespan">Set CPU Fan Duty:</div>
+                    <input #cpuDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
+                    <button (click)="setFanDuty(1, cpuDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canCpuDutyChange">Set CPU Fan Duty</button>
+                </div>
 
-    <div class="entrycontainer" [hidden]="!expertMode">
-        <div class="entrytitlespan">Set CPU Fan Duty:</div>
-        <input #cpuDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
-        <button (click)="setCpuFanDuty(cpuDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canCpuDutyChange">Set CPU Fan Duty</button>
-    </div>
-  </div>
+                <div [hidden]="!expertMode" style="margin-top: 10px;">
+                    <button (click)="setAutoFanDuty(1)" [disabled]="!isUserRoot || !canCpuDutyChange">Set Auto Duty for CPU Fan</button>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="gpu" role="tabpanel" aria-labelledby="gpu-tab">
+                <div style="float: left;">
+                    <h2>GPU Fan 1</h2>
+                
+                    <div class="entrycontainer">
+                        <div class="entrytitlespan">GPU Temp:</div><span>{{ gpuOneTemp }}</span>
+                    </div>
+                    <div class="entrycontainer">
+                        <div class="entrytitlespan">GPU FAN Duty (in %):</div><span>{{ gpuOneFanDuty }}</span>
+                    </div>
+                    <!-- <div class="entrycontainer">
+                        <div class="entrytitlespan">GPU FAN RPMs:</div><span>{{ gpuOneFanRpm }}</span>
+                    </div> -->
+                
+                    <div class="entrycontainer" [hidden]="!expertMode">
+                        <div class="entrytitlespan">Set GPU Fan Duty:</div>
+                        <input #gpuOneDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
+                        <button (click)="setFanDuty(2, gpuOneDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canGpuDutyChange">Set GPU Fan Duty</button>
+                    </div>
 
-  <div>
-    <h2>GPU</h2>
+                    <div [hidden]="!expertMode" style="margin-top: 10px;">
+                        <button (click)="setAutoFanDuty(2)" [disabled]="!isUserRoot || !canGpuDutyChange">Set Auto Duty for GPU Fan ONE</button>
+                    </div>
+                </div>
+                    
+                <div>
+                    <h2>GPU Fan 2</h2>
+                
+                    <div class="entrycontainer">
+                        <div class="entrytitlespan">GPU Temp:</div><span>{{ gpuTwoTemp }}</span>
+                    </div>
+                    <div class="entrycontainer">
+                        <div class="entrytitlespan">GPU FAN Duty (in %):</div><span>{{ gpuTwoFanDuty }}</span>
+                    </div>
+                    <!-- <div class="entrycontainer">
+                        <div class="entrytitlespan">GPU FAN RPMs:</div><span>{{ gpuTwoFanRpm }}</span>
+                    </div> -->
+                
+                    <div class="entrycontainer" [hidden]="!expertMode">
+                        <div class="entrytitlespan">Set GPU Fan Duty:</div>
+                        <input #gpuTwoDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
+                        <button (click)="setFanDuty(3, gpuTwoDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canGpuDutyChange">Set GPU Fan Duty</button>
+                    </div>
 
-    <div class="entrycontainer">
-      <div class="entrytitlespan">GPU Temp:</div><span>{{ gpuTemp }}</span>
+                    <div [hidden]="!expertMode" style="margin-top: 10px;">
+                        <button (click)="setAutoFanDuty(3)" [disabled]="!isUserRoot || !canGpuDutyChange">Set Auto Duty for GPU Fan Two</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="entrycontainer">
-      <div class="entrytitlespan">GPU FAN Duty:</div><span>{{ gpuFanDuty }}</span>
-    </div>
-    <div class="entrycontainer">
-      <div class="entrytitlespan">GPU FAN RPMs:</div><span>{{ gpuFanRpm }}</span>
-    </div>
-
-    <div class="entrycontainer" [hidden]="!expertMode">
-        <div class="entrytitlespan">Set GPU Fan Duty:</div>
-        <input #gpuDutySpeed type="number" min="1" max="100" value="20" [disabled]="!isUserRoot || !canCpuDutyChange">
-        <button (click)="setGpuFanDuty(gpuDutySpeed.value)" style="margin-left: 5px;" [disabled]="!isUserRoot || !canGpuDutyChange">Set GPU Fan Duty</button>
-    </div>
-  </div>
 </div>
 
 <div class="servicefileactions">
