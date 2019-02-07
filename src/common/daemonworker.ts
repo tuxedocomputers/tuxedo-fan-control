@@ -107,38 +107,40 @@ export class DaemonWorker
                 await System.Sleep(100);
             }
 
-            System.logMessage("GPU One Temp is '" + gpuOneInformations.remoteTemp.toString() + "' Grad, fan duty: " + gpuOneInformations.fanDuty.toString(), System.LOGFILE_PATH_DAEMON);
-            if(lastSetGpuOneDuty !== gpuOneSetDuty && gpuOneInformations.remoteTemp >= modelInformations.gpuMinTemp && gpuOneInformations.remoteTemp <= modelInformations.gpuMaxTemp)
+            if(hasGpu)
             {
-                System.logMessage("Change GPU One Duty", System.LOGFILE_PATH_DAEMON);
-                System.logMessage("Last: '" + lastSetGpuOneDuty.toString() + "' Current: '" + gpuOneSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
-                System.logMessage("Set GPU Duty One on " + gpuOneSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
+                System.logMessage("GPU One Temp is '" + gpuOneInformations.remoteTemp.toString() + "' Grad, fan duty: " + gpuOneInformations.fanDuty.toString(), System.LOGFILE_PATH_DAEMON);
+                if(lastSetGpuOneDuty !== gpuOneSetDuty && gpuOneInformations.remoteTemp >= modelInformations.gpuMinTemp && gpuOneInformations.remoteTemp <= modelInformations.gpuMaxTemp)
+                {
+                    System.logMessage("Change GPU One Duty", System.LOGFILE_PATH_DAEMON);
+                    System.logMessage("Last: '" + lastSetGpuOneDuty.toString() + "' Current: '" + gpuOneSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
+                    System.logMessage("Set GPU Duty One on " + gpuOneSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
 
-                let value: number = Math.round((255/100) * gpuOneSetDuty);
+                    let value: number = Math.round((255/100) * gpuOneSetDuty);
 
-                EC.setFanDuty(EC.FAN.GPUONEDATA, value);
+                    EC.setFanDuty(EC.FAN.GPUONEDATA, value);
 
-                lastSetGpuOneDuty = gpuOneSetDuty;
+                    lastSetGpuOneDuty = gpuOneSetDuty;
 
-                await System.Sleep(100);
+                    await System.Sleep(100);
+                }
+
+                System.logMessage("GPU Two Temp is '" + gpuTwoInformations.remoteTemp.toString() + "' Grad, fan duty: " + gpuTwoInformations.fanDuty.toString(), System.LOGFILE_PATH_DAEMON);
+                if(lastSetGpuTwoDuty !== gpuTwoSetDuty && gpuTwoInformations.remoteTemp >= modelInformations.gpuMinTemp && gpuTwoInformations.remoteTemp <= modelInformations.gpuMaxTemp)
+                {
+                    System.logMessage("Change GPU Two Duty", System.LOGFILE_PATH_DAEMON);
+                    System.logMessage("Last: '" + lastSetGpuTwoDuty.toString() + "' Current: '" + gpuTwoSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
+                    System.logMessage("Set GPU Duty Two on " + gpuTwoSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
+
+                    let value: number = Math.round((255/100) * gpuTwoSetDuty);
+                
+                    EC.setFanDuty(EC.FAN.GPUTWODATA, gpuTwoSetDuty);
+
+                    lastSetGpuTwoDuty = gpuTwoSetDuty;
+
+                    await System.Sleep(100);
+                }
             }
-
-            System.logMessage("GPU Two Temp is '" + gpuTwoInformations.remoteTemp.toString() + "' Grad, fan duty: " + gpuTwoInformations.fanDuty.toString(), System.LOGFILE_PATH_DAEMON);
-            if(lastSetGpuTwoDuty !== gpuTwoSetDuty && gpuTwoInformations.remoteTemp >= modelInformations.gpuMinTemp && gpuTwoInformations.remoteTemp <= modelInformations.gpuMaxTemp)
-            {
-                System.logMessage("Change GPU Two Duty", System.LOGFILE_PATH_DAEMON);
-                System.logMessage("Last: '" + lastSetGpuTwoDuty.toString() + "' Current: '" + gpuTwoSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
-                System.logMessage("Set GPU Duty Two on " + gpuTwoSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
-
-                let value: number = Math.round((255/100) * gpuTwoSetDuty);
-            
-                EC.setFanDuty(EC.FAN.GPUTWODATA, gpuTwoSetDuty);
-
-                lastSetGpuTwoDuty = gpuTwoSetDuty;
-
-                await System.Sleep(100);
-            }
-
             await System.Sleep(1000);
         }
     }
