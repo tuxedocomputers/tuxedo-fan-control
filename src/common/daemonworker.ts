@@ -134,7 +134,7 @@ export class DaemonWorker
 
                     let value: number = Math.round((255/100) * gpuTwoSetDuty);
                 
-                    EC.setFanDuty(EC.FAN.GPUTWODATA, gpuTwoSetDuty);
+                    EC.setFanDuty(EC.FAN.GPUTWODATA, value);
 
                     lastSetGpuTwoDuty = gpuTwoSetDuty;
 
