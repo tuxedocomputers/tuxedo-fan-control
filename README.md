@@ -39,11 +39,16 @@ Now, you may proceed with installing nodejs and build-essential packages:
 ```sh
 $ git clone https://github.com/tuxedocomputers/tuxedo-fan-control
 ```
-3. Build the Project:
+
+3. Install the Node dependencies
+```sh
+npm install
+```
+
+4. Build the Project:
 ```sh
 npm run build
 ```
-
 
 ### Create Packages (deb, snap, AppImage, rpm, tar.gz)
 ```sh
