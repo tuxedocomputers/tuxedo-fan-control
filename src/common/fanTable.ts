@@ -33,7 +33,7 @@ export function readFanTables(): FanTable[]
     let path: any = Environment.getObject("path");
     let tables = new Array<FanTable>();
 
-    fs.writeFileSync(System.LOGFILE_PATH, "Read fan table\n", { flag: "a" });
+    fs.writeFileSync(System.LOGFILE_PATH, new Date().toISOString() + " Read fan table\n", { flag: "a" });
     let content = fs.readFileSync(path.join(__dirname, fanTablesFilePath)).toString()
 
     tables = JSON.parse(content);

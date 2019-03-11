@@ -109,6 +109,8 @@ export class DaemonWorker
 
             if(hasGpu)
             {
+                System.logMessage("Start set GPU fans", System.LOGFILE_PATH_DAEMON);
+
                 System.logMessage("GPU One Temp is '" + gpuOneInformations.remoteTemp.toString() + "' Grad, fan duty: " + gpuOneInformations.fanDuty.toString(), System.LOGFILE_PATH_DAEMON);
                 if(lastSetGpuOneDuty !== gpuOneSetDuty && gpuOneInformations.remoteTemp >= modelInformations.gpuMinTemp && gpuOneInformations.remoteTemp <= modelInformations.gpuMaxTemp)
                 {
@@ -140,7 +142,10 @@ export class DaemonWorker
 
                     await System.Sleep(100);
                 }
+
+                System.logMessage("End set GPU fans", System.LOGFILE_PATH_DAEMON);
             }
+            
             await System.Sleep(1000);
         }
     }

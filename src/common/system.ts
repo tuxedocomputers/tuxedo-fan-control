@@ -262,4 +262,97 @@ export class System
     {
         return new Promise(resolve => setTimeout(resolve, milliseconds));
     }
+    
+    public static getDistribution(relaseTextContent: string = ""): string
+    {
+        let distibution: string = "UNKNOW";
+        let searchPattern: string = "NAME=";
+
+        if(relaseTextContent === "")
+        {
+            relaseTextContent = Environment.getObject("fs").readFileSyncString("/etc/os-release");
+        }
+
+        for(let line of relaseTextContent.split("\n"))
+        {
+            if(line.startsWith(searchPattern))
+            {
+                distibution = line.substring(searchPattern.length, line.length);
+            }
+        }
+
+        if(distibution.startsWith("\""))
+        {
+            distibution = distibution.substring(1, distibution.length);
+        }
+
+        if(distibution.endsWith("\""))
+        {
+            distibution = distibution.substring(0, distibution.length - 1);
+        }
+
+        return distibution;
+    }
+
+    public static getDistributionId(relaseTextContent: string = ""): string
+    {
+        let distibution: string = "UNKNOW";
+        let searchPattern: string = "ID=";
+
+        if(relaseTextContent === "")
+        {
+            relaseTextContent = Environment.getObject("fs").readFileSyncString("/etc/os-release");
+        }
+
+        for(let line of relaseTextContent.split("\n"))
+        {
+            if(line.startsWith(searchPattern))
+            {
+                distibution = line.substring(searchPattern.length, line.length);
+            }
+        }
+
+        if(distibution.startsWith("\""))
+        {
+            distibution = distibution.substring(1, distibution.length);
+        }
+
+        if(distibution.endsWith("\""))
+        {
+            distibution = distibution.substring(0, distibution.length - 1);
+        }
+
+        return distibution;
+    }
+
+    public static getDistributionVersion(relaseTextContent: string = ""): string
+    {
+        let version: string = "UNKNOW";
+        let searchPattern: string = "VERSION_ID=";
+
+        if(relaseTextContent === "")
+        {
+            relaseTextContent = Environment.getObject("fs").readFileSyncString("/etc/os-release");
+        }
+
+        for(let line of relaseTextContent.split("\n"))
+        {
+            if(line.startsWith(searchPattern))
+            {
+                version = line.substring(searchPattern.length, line.length);
+            }
+        }
+
+        if(version.startsWith("\""))
+        {
+            version = version.substring(1, version.length);
+        }
+
+        if(version.endsWith("\""))
+        {
+            version = version.substring(0, version.length - 1);
+        }
+
+        return version;
+    }
 }

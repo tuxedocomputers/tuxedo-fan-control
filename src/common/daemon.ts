@@ -99,7 +99,7 @@ export function restart(): void
  */
 export function isDaemonRunning(): boolean
 {
-    fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "check if daemon running\n", { flag: "a" });
+    fs.writeFileSync(System.LOGFILE_PATH_DAEMON, new Date().toISOString() +" check if daemon running\n", { flag: "a" });
 
     if(fs.existsSync(System.PID_FILE_PATH))
     {
@@ -113,7 +113,7 @@ export function isDaemonRunning(): boolean
         try
         {
             let process_return = child_process.execSync("ps -p " + daemonPid + " -o comm=").toString();
-            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, "process_return: " + process_return + "\n", { flag: "a"} );
+            fs.writeFileSync(System.LOGFILE_PATH_DAEMON, new Date().toISOString() + " process list return value: " + process_return + "\n", { flag: "a"} );
 
             if(process_return !== "")
             {

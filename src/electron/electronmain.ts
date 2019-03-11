@@ -13,6 +13,14 @@ let devWindow = false;
 let isUserRoot = process.getuid && process.getuid() === 0;
 let logFilePath = require("./common/system").System.LOGFILE_PATH;
 
+let distribution: string = require("./common/system").System.getDistribution(fs.readFileSync("/etc/os-release").toString());
+let distributionVersion: string = require("./common/system").System.getDistributionVersion(fs.readFileSync("/etc/os-release").toString());
+
+fs.writeFileSync(logFilePath, "--------------------\n", { flag: "a" });
+fs.writeFileSync(logFilePath, new Date().toISOString() + "; Application Version : " + app.getVersion() + "\n", { flag: "a" });
+fs.writeFileSync(logFilePath, new Date().toISOString() + "; Distribution        : " + distribution+ "\n" , { flag: "a" });
+fs.writeFileSync(logFilePath, new Date().toISOString() + "; Distribution Version: " + distributionVersion + "\n" , { flag: "a" });
+
 if(!fs.existsSync(path.dirname(logFilePath)))
 {
     fs.mkdirSync(path.dirname(logFilePath));
