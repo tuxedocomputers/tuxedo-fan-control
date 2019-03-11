@@ -1,6 +1,6 @@
 {
     "name": "tuxedofancontrol",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "homepage": "https://tuxedocomputers.com",
     "author": {
         "name": "Christian Loritz / TUXEDO Computers GmbH",
@@ -20,7 +20,7 @@
         "clean": "rm -rf ./bin && rm -rf ./build && rm -rf ./output && rm -rf ./dist"
     },
     "build": {
-        "appId": "com.electron.tuxedofancontrol",
+        "appId": "com.tuxedo.tuxedofancontrol",
         "productName": "tuxedofancontrol",
         "copyright": "copyright © 2018 TUXEDO Computers GmbH",
         "icon": "./data/32x32.png",
