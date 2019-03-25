@@ -1,5 +1,10 @@
 # Deutsch
 
+## Version 0.1.6
+- Update NPM Pakete
+- Update der Readme.md Datei
+- Beheben von Fehlern
+
 ## Version 0.1.5
 - Neue Logik für die Lüftersteuerung implementiert
 
@@ -34,6 +39,11 @@
 - Erste Version
 
 # English
+
+## Version 0.1.6
+- Update NPM packages
+- Update Readme.md File
+- Bug fixing
 
 ## Version 0.1.5
 - Implement the new fan control logic
