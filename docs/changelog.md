@@ -1,5 +1,8 @@
 # Deutsch
 
+## Version 0.1.5
+- Neue Logik für die Lüftersteuerung implementiert
+
 ## Version 0.1.4
 - Klarerer Name für Daemon start und stop
 
@@ -32,8 +35,11 @@
 
 # English
 
+## Version 0.1.5
+- Implement the new fan control logic
+
 ## Version 0.1.4
-- clener name for daemon start and stop
+- cleaner name for daemon start and stop
 
 ## Version 0.1.3b
 - Documentation functions

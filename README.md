@@ -6,6 +6,14 @@ The TUXEDO Fan Control is a Application and Daemon for controlling the fans of C
 User Manual: [user_manual.md](./docs/user/user_manual.md)   
 Dev Manual: [dev_manual.md](./docs/dev/dev_manual.md)
 
+# Supported Platforms
+Currently we support the follow platforms:
+- TUXEDO Budgie
+- Ubuntu 18.04
+- openSUSE 15
+
+All other platforms are not tested and we not give warranty to run.
+
 ## Development
 
 ### Dependencies
