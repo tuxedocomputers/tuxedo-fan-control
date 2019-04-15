@@ -127,7 +127,11 @@ export class AppComponent implements OnInit, OnDestroy
 
         let cpuInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.CPUDATA);
 
-        this.cpuTemp = cpuInfos.remoteTemp;
+        if(cpuInfos.remoteTemp != 1)
+        {
+            this.cpuTemp = cpuInfos.remoteTemp;
+        }
+
         this.cpuFanDuty = Math.round(cpuInfos.fanDuty);
         // this.cpuFanRpm = cpuInfos.rpm;
 
@@ -149,7 +153,11 @@ export class AppComponent implements OnInit, OnDestroy
         {
             let gpuOneInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.GPUONEDATA);
 
-            this.gpuOneTemp = gpuOneInfos.localTemp;
+            if(gpuOneInfos.localTemp)
+            {
+                this.gpuOneTemp = gpuOneInfos.localTemp;
+            }
+            
             this.gpuOneFanDuty = Math.round(gpuOneInfos.fanDuty);
             // this.gpuOneFanRpm = gpuOneInfos.rpm;
 
@@ -169,7 +177,11 @@ export class AppComponent implements OnInit, OnDestroy
 
             let gpuTwoInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.GPUTWODATA);
 
-            this.gpuTwoTemp = gpuTwoInfos.localTemp;
+            if(gpuTwoInfos.localTemp)
+            {
+                this.gpuTwoTemp = gpuTwoInfos.localTemp;
+            }
+            
             this.gpuTwoFanDuty = Math.round(gpuTwoInfos.fanDuty);
             // this.gpuTwoFanRpm = gpuTwoInfos.rpm;
 
