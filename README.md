@@ -19,7 +19,6 @@ All other platforms are not tested and we not give warranty to run.
 ### Dependencies
 - Node.js (Version >=10)
 - gcc
-- NVIDIA SMI for Controlling the NVIDIA GPU Fan (Only need at devices with nvidia graphic cards)
 - Xvfb (X Window Virtual Framebuffer)
 
 ### Build from source

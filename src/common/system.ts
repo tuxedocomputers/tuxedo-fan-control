@@ -94,31 +94,6 @@ export class System
         return false;
     }
 
-    /**
-     * Check if NVIDIA SMI is installed
-     *
-     * @returns True if NVIDIA SMI is installed, otherwise false
-     */
-    public static isNvidiaSmiInstalled(): boolean
-    {
-        let child_process = Environment.getObject("child_process");
-
-        return child_process.spawnSync("which", ["nvidia-smi"]).status == 0;
-    }
-
-    /**
-     * Read the GPU Temperature from NVIDIA SMI
-     *
-     * @returns A Number with the GPU Temperature
-     */
-    public static getNvidiaTemperature(): number
-    {
-        let nvidia_smi_temp_command: string = "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader";
-        let child_process = Environment.getObject("child_process");
-
-        return Number(child_process.execSync(nvidia_smi_temp_command).toString());
-    }
-
     public static checkIfNvidiaCardExists(): boolean
     {
         let fs = Environment.getObject("fs");
