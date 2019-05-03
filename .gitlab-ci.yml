@@ -1,0 +1,47 @@
+image: ubuntu:18.04
+
+variables:
+  DEBIAN_FRONTEND: noninteractive
+
+before_script:
+  - apt-get -qq update > /dev/null 2>&1
+  - apt-get -qq install -y curl > /dev/null 2>&1
+  - curl -sL https://deb.nodesource.com/setup_10.x | bash -
+  - apt-get -qq install -y nodejs autoconf automake build-essential gcc g++ make rpm > /dev/null 2>&1
+  - npm install
+
+build:
+  except:
+    - tags
+  script:
+    - npm run build
+    - npm run pack
+    - cp output/build/*.* ./
+  artifacts:
+    name: fan-control-${CI_COMMIT_REF_SLUG}
+    when: on_success
+    paths:
+      - '*.AppImage'
+      - '*.snap'
+      - '*.tar.gz'
+      - '*.deb'
+      - '*.rpm'
+
+release:
+  except:
+    - branches
+  only:
+    - tags
+  script:
+    - npm run build:prod
+    - npm run pack:prod
+    - cp output/build/*.* ./
+  artifacts:
+    name: fan-control-${CI_COMMIT_REF_SLUG}
+    when: on_success
+    paths:
+      - '*.AppImage'
+      - '*.snap'
+      - '*.tar.gz'
+      - '*.deb'
+      - '*.rpm'
