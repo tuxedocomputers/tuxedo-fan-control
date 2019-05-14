@@ -22,8 +22,4 @@ release:
     name: fan-control-${CI_COMMIT_REF_SLUG}
     when: on_success
     paths:
-      - '*.AppImage'
-      - '*.snap'
-      - '*.tar.gz'
-      - '*.deb'
-      - '*.rpm'
+      - $BUILD_FOLDER_NAME/*
