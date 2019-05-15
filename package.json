@@ -1,6 +1,6 @@
 {
     "name": "tuxedofancontrol",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "homepage": "https://tuxedocomputers.com",
     "author": {
         "name": "Christian Loritz / TUXEDO Computers GmbH",
@@ -22,7 +22,7 @@
     "build": {
         "appId": "com.tuxedo.tuxedofancontrol",
         "productName": "tuxedofancontrol",
-        "copyright": "copyright © 2018 TUXEDO Computers GmbH",
+        "copyright": "copyright © 2019 TUXEDO Computers GmbH",
         "icon": "./data/32x32.png",
         "directories": {
             "output": "./output/build"
@@ -107,5 +107,10 @@
         "ts-node": "~7.0.1",
         "tslint": "~5.11.0",
         "typescript": "~3.1.6"
-    }
+    },
+    "contributors": [
+        {
+            "name": "Christian Loritz"
+        }
+    ]
 }
