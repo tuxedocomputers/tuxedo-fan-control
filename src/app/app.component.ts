@@ -153,9 +153,9 @@ export class AppComponent implements OnInit, OnDestroy
         {
             let gpuOneInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.GPUONEDATA);
 
-            if(gpuOneInfos.localTemp)
+            if(gpuOneInfos.remoteTemp != 1)
             {
-                this.gpuOneTemp = gpuOneInfos.localTemp;
+                this.gpuOneTemp = gpuOneInfos.remoteTemp;
             }
             
             this.gpuOneFanDuty = Math.round(gpuOneInfos.fanDuty);
@@ -177,9 +177,9 @@ export class AppComponent implements OnInit, OnDestroy
 
             let gpuTwoInfos: ec_access.FanInforamtion = ec_access.getFanInformation(ec_access.FAN.GPUTWODATA);
 
-            if(gpuTwoInfos.localTemp)
+            if(gpuTwoInfos.remoteTemp != 1)
             {
-                this.gpuTwoTemp = gpuTwoInfos.localTemp;
+                this.gpuTwoTemp = gpuTwoInfos.remoteTemp;
             }
             
             this.gpuTwoFanDuty = Math.round(gpuTwoInfos.fanDuty);
