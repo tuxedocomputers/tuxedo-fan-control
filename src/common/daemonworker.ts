@@ -92,7 +92,7 @@ export class DaemonWorker
             }
 
             System.logMessage("CPU Temp is '" + cpuInformations.remoteTemp.toString() + "' Grad, fan duty: " + cpuInformations.fanDuty.toString(), System.LOGFILE_PATH_DAEMON);
-            if(lastSetCpuDuty !== cpuSetDuty && cpuInformations.remoteTemp > 1 && cpuInformations.remoteTemp <= modelInformations.cpuMaxTemp)
+            if(cpuInformations.remoteTemp > 1 && cpuInformations.remoteTemp <= modelInformations.cpuMaxTemp)
             {
                 System.logMessage("Change CPU Duty", System.LOGFILE_PATH_DAEMON);
                 System.logMessage("Last: '" + lastSetCpuDuty.toString() + "' Current: '" + cpuSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
@@ -112,7 +112,7 @@ export class DaemonWorker
                 System.logMessage("Start set GPU fans", System.LOGFILE_PATH_DAEMON);
 
                 System.logMessage("GPU One Temp is '" + gpuOneInformations.remoteTemp.toString() + "' Grad, fan duty: " + gpuOneInformations.fanDuty.toString(), System.LOGFILE_PATH_DAEMON);
-                if(lastSetGpuOneDuty !== gpuOneSetDuty && gpuOneInformations.remoteTemp > 1 && gpuOneInformations.remoteTemp <= modelInformations.gpuMaxTemp)
+                if(gpuOneInformations.remoteTemp > 1 && gpuOneInformations.remoteTemp <= modelInformations.gpuMaxTemp)
                 {
                     System.logMessage("Change GPU One Duty", System.LOGFILE_PATH_DAEMON);
                     System.logMessage("Last: '" + lastSetGpuOneDuty.toString() + "' Current: '" + gpuOneSetDuty.toString(), System.LOGFILE_PATH_DAEMON);
@@ -128,7 +128,7 @@ export class DaemonWorker
                 }
 
                 System.logMessage("GPU Two Temp is '" + gpuTwoInformations.remoteTemp.toString() + "' Grad, fan duty: " + gpuTwoInformations.fanDuty.toString(), System.LOGFILE_PATH_DAEMON);
-                if(lastSetGpuTwoDuty !== gpuTwoSetDuty && gpuTwoInformations.remoteTemp > 1 && gpuTwoInformations.remoteTemp <= modelInformations.gpuMaxTemp)
+                if(gpuTwoInformations.remoteTemp > 1 && gpuTwoInformations.remoteTemp <= modelInformations.gpuMaxTemp)
                 {
                     System.logMessage("Change GPU Two Duty", System.LOGFILE_PATH_DAEMON);
                     System.logMessage("Last: '" + lastSetGpuTwoDuty.toString() + "' Current: '" + gpuTwoSetDuty.toString(), System.LOGFILE_PATH_DAEMON);

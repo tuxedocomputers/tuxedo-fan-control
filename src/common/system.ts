@@ -163,7 +163,7 @@ export class System
      * @param logTime If true, insert log time before message
      */
     public static logMessage(message: string, logPath: string = System.LOGFILE_PATH, startWithSemicolon: boolean = true, logTime: boolean = true): void
-    {
+    {/*
         console.log(message);
         if(startWithSemicolon)
         {
@@ -177,7 +177,7 @@ export class System
         else
         {
             Environment.getObject("fs").writeFileSync(logPath, message + "\n", { flag: "a" });
-        }
+        }*/
     }
 
     /**
