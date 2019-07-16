@@ -2,8 +2,8 @@
     {
         "model": "XXALLXX",
         "hasGpu": true,
-        "defaultFanDutyCpu": 0,
-        "defaultFanDutyGpu": 0,
+        "defaultFanDutyCpu": 1,
+        "defaultFanDutyGpu": 1,
         "cpuMinTemp": 44,
         "cpuMaxTemp": 100,
         "gpuMinTemp": 44,
