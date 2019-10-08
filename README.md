@@ -47,12 +47,17 @@ Now, you may proceed with installing nodejs and build-essential packages:
 $ git clone https://github.com/tuxedocomputers/tuxedo-fan-control
 ```
 
-3. Install the Node dependencies
+3. Enter the folder
+```sh
+cd tuxedo-fan-control
+```
+
+4. Install the Node dependencies
 ```sh
 npm install
 ```
 
-4. Build the Project:
+5. Build the Project:
 ```sh
 npm run build
 ```
