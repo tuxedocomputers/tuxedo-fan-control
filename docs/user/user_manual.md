@@ -76,9 +76,9 @@ Description=TUXEDO Fan Control
 
 [Service]
 Type=forking
-ExecStart=/bin/bash -c "Xvfb :99 & export DISPLAY=:99 && <path>/tuxedofancontrol --startdaemon"
-ExecStop=/bin/bash -c "Xvfb :99 & export DISPLAY=:99 && <path>/tuxedofancontrol --stopdaemon"
-ExecReload=/bin/bash -c "Xvfb :99 & export DISPLAY=:99 && <path>/tuxedofancontrol --restartdaemon"
+ExecStart=/bin/bash -c "Xvfb :98 -screen 0 1x1x16 & export DISPLAY=:98 && <path>/tuxedofancontrol --startdaemon"
+ExecStop=/bin/bash -c "Xvfb :98 -screen 0 1x1x16 & export DISPLAY=:98 && <path>/tuxedofancontrol --stopdaemon"
+ExecReload=/bin/bash -c "Xvfb :98 -screen 0 1x1x16 & export DISPLAY=:98 && <path>/tuxedofancontrol --restartdaemon"
 
 Restart=always
 
