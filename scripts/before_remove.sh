@@ -9,7 +9,7 @@ if [ "`systemctl is-enabled tuxedofancontrol.service`" == "enabled" ]; then
 fi
 
 if [ -d "/opt/tuxedofancontrol/tuxedofancontrol" ]; then
-    Xvfb :99 & export DISPLAY=:99 && /opt/tuxedofancontrol/tuxedofancontrol --removeunitfile
+    Xvfb :98 -screen 0 1x1x16 & export DISPLAY=:98 && /opt/tuxedofancontrol/tuxedofancontrol --removeunitfile
 fi
 
 if [ -f "/usr/bin/tuxedofancontrol" ]; then
