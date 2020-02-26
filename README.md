@@ -1,7 +1,7 @@
 # TuxedoFanControl
 
-# Induction
-The TUXEDO Fan Control is a Application and Daemon for controlling the fans of CPU and GPU of your TUXEDO Notebook device.
+# Introduction
+The TUXEDO Fan Control is a Application and Daemon for controlling the fans of CPU and GPU of your TUXEDO Notebook device. Do not run the TUXEDO Fan Control on other hardware - we are not giving any warranty.
 
 User Manual: [user_manual.md](./docs/user/user_manual.md)   
 Dev Manual: [dev_manual.md](./docs/dev/dev_manual.md)
@@ -9,10 +9,11 @@ Dev Manual: [dev_manual.md](./docs/dev/dev_manual.md)
 # Supported Platforms
 Currently we support the follow platforms:
 - TUXEDO Budgie
-- Ubuntu 18.04
-- openSUSE 15
+- Ubuntu LTS 18.04
+- openSUSE Leap 15.1
 
-All other platforms are not tested and we not give warranty to run.
+
+All other platforms are not tested and we are not giving any warranty.
 
 ## Development
 
