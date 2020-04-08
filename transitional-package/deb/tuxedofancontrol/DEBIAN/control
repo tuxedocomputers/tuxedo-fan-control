@@ -1,0 +1,11 @@
+Package: tuxedofancontrol
+Version: 0.1.10
+Section: oldlibs
+Priority: extra
+Depends: tuxedo-control-center
+Maintainer: TUXEDO Computers GmbH <tux@tuxedocomputers.com>
+Homepage: https://www.tuxedocomputers.com
+Architecture: all
+Description: Transitional package: tuxedofancontrol -> tuxedo-control-center
+ This is a transitional package deprecating tuxedofancontrol. It is now
+ completely replaced by tuxedo-control-center.
