@@ -1,7 +1,7 @@
 # TuxedoFanControl
 
 # Obsolete
-### TuxedoFanControl has been replaced by TUXEDO Control Center.
+### TuxedoFanControl has been replaced by [TUXEDO Control Center](https://github.com/tuxedocomputers/tuxedo-control-center).
 
 # Introduction
 The TUXEDO Fan Control is a Application and Daemon for controlling the fans of CPU and GPU of your TUXEDO Notebook device. Do not run the TUXEDO Fan Control on other hardware - we are not giving any warranty.
