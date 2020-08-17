@@ -159,7 +159,7 @@ let publicOptions: Array<CommandlineOption> = [
 
                 tuxedoCheckerAndExecuter(() => {
                     try
-                    {    
+                    {
                         require("./common/system").System.createUnitFile();
                     }
                     catch(error)
@@ -227,11 +227,11 @@ let privateOptions: Array<CommandlineOption> = [
             environment.setDaemonMode(true);
             environment.setEnvironmentVariable("fs", require("fs"), "daemon");
 
-            tuxedoCheckerAndExecuter(() => { 
+            tuxedoCheckerAndExecuter(() => {
                 try
                 {
-                    fs.writeFileSync(logFilePath, "Configure daemon", { flag: "a" });
-                    
+                    fs.writeFileSync(logFilePath, new Date().toISOString() + " Configure daemon\n", { flag: "a" });
+
                     environment.setEnvironmentVariable("os", require("os"), "daemon");
                     environment.setEnvironmentVariable("path", require("path"), "daemon");
                     environment.setEnvironmentVariable("child_process", require("child_process"), "daemon");
@@ -245,7 +245,7 @@ let privateOptions: Array<CommandlineOption> = [
                 }
                 catch (error)
                 {
-                    fs.writeFileSync(logFilePath, "Error at start daemon, error: " + error + "\n", { flag: "a" });
+                    fs.writeFileSync(logFilePath, new Date().toISOString() + "Error at start daemon, error: " + error + "\n", { flag: "a" });
                 }
             });
         }
@@ -254,17 +254,17 @@ let privateOptions: Array<CommandlineOption> = [
         option: null,
         optionLong: "--expert",
         description: "",
-        action: (arg, index, array) => { 
+        action: (arg, index, array) => {
             (<any>global).expertMode = true;
-         }
+        }
     },
     {
         option: null,
         optionLong: "--novendorcheck",
         description: "",
-        action: (arg, index, array) => { 
+        action: (arg, index, array) => {
             (<any>global).vendorcheck = false;
-         }
+        }
     }
 ];
 
@@ -372,7 +372,7 @@ function printCurrentFanInformations(): void
     {
         console.log("Nvidia Card exist");
         gpuOneInfon = ec_access.getFanInformation(ec_access.FAN.GPUONEDATA);
-        
+
         for(let i = 0; i < 100000; i++) {}
 
         gpuTwoInfon = ec_access.getFanInformation(ec_access.FAN.GPUTWODATA);

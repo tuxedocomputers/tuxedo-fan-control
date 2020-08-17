@@ -18,6 +18,16 @@ Currently we support the follow platforms:
 
 All other platforms are not tested and we are not giving any warranty.
 
+# Config
+
+## TUXEDO_FAN_TABLE_FILE
+It is possible to set a external fantables.json via the environment variable
+**TUXEDO_FAN_TABLE_FILE** (use absolute file paths).
+
+**IMPORTANT: Wrong or to low values can overheat the hardware and damage the system!**
+
+Example see: [fantables.json](./src/data/fantables.json)
+
 ## Development
 
 ### Dependencies
